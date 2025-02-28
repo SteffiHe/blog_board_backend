@@ -2,7 +2,7 @@ package paf.personal_blog_system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import paf.personal_blog_system.entity.Category;
+import paf.personal_blog_system.model.Category;
 import paf.personal_blog_system.repo.CategoryRepo;
 
 import java.util.List;

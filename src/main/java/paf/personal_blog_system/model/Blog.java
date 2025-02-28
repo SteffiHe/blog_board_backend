@@ -1,4 +1,4 @@
-package paf.personal_blog_system.entity;
+package paf.personal_blog_system.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 
 /**
@@ -45,14 +46,5 @@ public class Blog {
         this.content = content;
         this.category = category;
         this.tags = tags;
-    }
-
-        public static void main(String[] args) {
-            Blog blog = new Blog();
-            blog.setCategory(new Category("Tech"));
-            blog.setTags(List.of(new Tag("Java"), new Tag("Spring")));
-
-            System.out.println("Category: " + blog.getCategory().getName());
-            System.out.println("Tags: " + blog.getTags().stream().map(Tag::getName).toList());
     }
 }

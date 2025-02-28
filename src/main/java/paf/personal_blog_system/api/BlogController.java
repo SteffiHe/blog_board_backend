@@ -1,7 +1,7 @@
 package paf.personal_blog_system.api;
 
 import org.springframework.web.bind.annotation.PathVariable;
-import paf.personal_blog_system.entity.Blog;
+import paf.personal_blog_system.model.Blog;
 import paf.personal_blog_system.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

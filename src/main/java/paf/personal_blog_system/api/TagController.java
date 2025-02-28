@@ -2,7 +2,7 @@ package paf.personal_blog_system.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import paf.personal_blog_system.entity.Tag;
+import paf.personal_blog_system.model.Tag;
 import paf.personal_blog_system.service.TagService;
 import java.util.List;
 

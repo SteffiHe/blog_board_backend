@@ -1,7 +1,7 @@
 package paf.personal_blog_system.repo;
 
 import org.springframework.stereotype.Repository;
-import paf.personal_blog_system.entity.Blog;
+import paf.personal_blog_system.model.Blog;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 @Repository

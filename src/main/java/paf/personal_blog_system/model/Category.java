@@ -1,4 +1,4 @@
-package paf.personal_blog_system.entity;
+package paf.personal_blog_system.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -8,24 +8,24 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Class to represent a tag
+ * Class to represent a category
  */
-@Setter
-@Getter
-@Document(collection = "tags")
+@Document(collection = "categories")
 @NoArgsConstructor
-public class Tag {
+@Getter
+@Setter
+public class Category {
     @Id
     @JsonProperty
     private String id; //unique id
     @JsonProperty
-    private String name; //name of the tag
+    private String name; //name of the category
 
     /**
      * Constructor
-     * @param name name of the tag
+     * @param name name of the category
      */
-    public Tag(String name) {
+    public Category(String name) {
         this.name = name;
     }
 }

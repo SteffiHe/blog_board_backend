@@ -1,11 +1,11 @@
 package paf.personal_blog_system.service;
 
-import paf.personal_blog_system.entity.Blog;
-import paf.personal_blog_system.entity.Category;
+import paf.personal_blog_system.model.Blog;
+import paf.personal_blog_system.model.Category;
 import paf.personal_blog_system.repo.TagRepo;
 import paf.personal_blog_system.repo.CategoryRepo;
 import paf.personal_blog_system.repo.BlogRepo;
-import paf.personal_blog_system.entity.Tag;
+import paf.personal_blog_system.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
