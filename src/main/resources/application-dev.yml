@@ -24,7 +24,8 @@ spring:
   data:
     mongodb:
       primary:
-        uri: mongodb://localhost:27017/blog
+        uri: mongodb://localhost:27017/blogdb
+        database: blogdb
   devtools:
     restart:
       additional-paths: src/main/java # setup which directory to restart

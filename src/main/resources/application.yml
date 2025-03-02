@@ -5,8 +5,3 @@ spring:
     name: blog_system_1
   profiles:
     active: dev
-  # MongoDB Configuration
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/blogdb
-      database: blogdb
