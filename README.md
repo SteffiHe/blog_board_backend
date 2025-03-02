@@ -26,6 +26,51 @@ INSERT INTO public.user (USERNAME, PASSWORD, BIRTHDAY, EMAIL) VALUES
 select * from public.user order by username asc;
 ```
 
+## MongoDB
+
+### Blog
+
+```JSON
+db.blog.insertMany([
+  {
+    _id: "blog_124",
+    title: "Warum MongoDB?",
+    content: "MongoDB ist eine flexible NoSQL-Datenbank...",
+    author_id: 43,
+    category: { id: "cat_2", name: "NoSQL" },
+    tags: [{ id: "tag_1", name: "MongoDB" }],
+    created_at: new Date()
+  },
+  {
+    _id: "blog_125",
+    title: "Vorteile von PostgreSQL",
+    content: "PostgreSQL ist eine leistungsstarke relationale DB...",
+    author_id: 44,
+    category: { id: "cat_3", name: "SQL-Datenbanken" },
+    tags: [{ id: "tag_2", name: "PostgreSQL" }],
+    created_at: new Date()
+  }
+])
+```
+
+### Tag
+
+```JSON
+db.tag.insertMany([
+  { _id: "tag_1", name: "MongoDB" },
+  { _id: "tag_2", name: "PostgreSQL" }
+])
+```
+
+### Category
+
+```JSON
+db.category.insertMany([
+  { _id: "cat_1", name: "Datenbanken" },
+  { _id: "cat_2", name: "NoSQL" },
+  { _id: "cat_3", name: "SQL-Datenbanken" }
+])
+```
 
 # API Doc
 
