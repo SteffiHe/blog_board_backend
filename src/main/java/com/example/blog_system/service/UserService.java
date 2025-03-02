@@ -5,5 +5,5 @@ import com.example.blog_system.entity.User;
 import java.util.List;
 
 public interface UserService {
-    List<User> findAllUser();
+    List<User> getAllUsers();
 }

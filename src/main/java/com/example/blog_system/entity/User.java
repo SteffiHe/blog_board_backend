@@ -2,9 +2,13 @@ package com.example.blog_system.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(
@@ -14,13 +18,24 @@ import java.util.Date;
 @Data
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @UuidGenerator
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private int id;
+
+    @Column(nullable = false, unique = true)
     private String username;
     private String password;
+
+    @Temporal(TemporalType.DATE)
     private Date birthday;
     private String email;
+
+    @CreationTimestamp  // Automatically sets creation timestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_time", updatable = false)
     private Date createTime;
 
 }
