@@ -1,0 +1,75 @@
+spring:
+  datasource:
+    dynamic:
+      primary: dataSourcePostgreSql
+      strict: false
+      datasource:
+        dataSourcePostgreSql:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://localhost:5432/postgres
+          username: postgres
+          password: postgres
+          type: com.zaxxer.hikari.HikariDataSource
+          hikari:
+            minimum-idle: 100          # Minimum idle connections
+            maximum-pool-size: 50    # Maximum connections in the pool
+            idle-timeout: 30000      # Connection idle timeout (milliseconds)
+            max-lifetime: 1800000    # Maximum connection lifetime (milliseconds)
+            connection-timeout: 30000 # Connection timeout (milliseconds)
+            validation-timeout: 3000 # Connection validation timeout (milliseconds)
+            is-read-only: false      # Read-only connection
+            # pool-name: HikariPool-1  # Custom pool name
+      aop:
+        enabled: true
+  data:
+    mongodb:
+      primary:
+        uri: mongodb://localhost:27017/blog
+  devtools:
+    restart:
+      additional-paths: src/main/java # setup which directory to restart
+      additional-exclude: static/**,public/** # exclude the directory
+      enabled: true # warm-startup the springboor project
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+2
+    default-property-inclusion: non_null
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true # Enable SQL logging to debug database connectivity issues:
+        format_sql: true
+        #default_schema: public  # Primary schema
+        #temp:
+        #  use_jdbc_metadata_defaults: false
+        #dialect: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  web:
+    resources:
+      # classpath: it stands for the target directory of the project
+      # /upload/ without classpath in the beginning. It indicates the path where the webserver tomcat runs
+      static-locations: classpath:/css/, classpath:/js/, classpath:/images/, classpath:/static/, /upload/
+  mvc:
+    static-path-pattern: /images/**
+server:
+  port: 8080
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.example.blog_system.entity
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+logging:
+  level:
+    root: INFO
+  file:
+    path: logs
