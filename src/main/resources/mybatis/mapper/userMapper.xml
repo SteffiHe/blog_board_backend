@@ -9,10 +9,25 @@
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <select id="findUserById" resultMap="UserMap">
-        select * from public.user
+    <select id="getUserByUsername" parameterType="String" resultMap="UserMap">
+        SELECT * FROM public.user WHERE username = #{username}
     </select>
     <select id="getAllUsers" resultMap="UserMap">
         select * from public.user
     </select>
+    <delete id="deleteUserByUsername" parameterType="String">
+        DELETE FROM public.user WHERE username = #{username}
+    </delete>
+    <insert id="insertUser" parameterType="com.example.blog_system.entity.User">
+        INSERT INTO public.user (username, password, email, birthday, create_time)
+        VALUES (#{username}, #{password}, #{email}, #{birthday}, #{createTime});
+    </insert>
+    <update id="updateUser" parameterType="com.example.blog_system.entity.User">
+        UPDATE public.user
+        SET password = #{password},
+            email = #{email},
+            birthday = #{birthday},
+            create_time = #{createTime}
+        WHERE username = #{username}
+    </update>
 </mapper>

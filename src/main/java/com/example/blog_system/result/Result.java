@@ -24,10 +24,38 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    public static <T> Result<T> failure(String code, String message) {
+    public static <T> Result<T> success(String message) {
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setMessage(message);
+        return result;
+    }
+
+    public static <T> Result<T> failure() {
         Result<T> result = new Result<>();
         result.setCode(ResultCode.FAILED.getCode());
         result.setMessage(ResultCode.FAILED.getMessage());
+        return result;
+    }
+
+    public static <T> Result<T> failure(String message) {
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.FAILED.getCode());
+        result.setMessage(message);
+        return result;
+    }
+
+    public static <T> Result<T> notFound() {
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.NOT_FOUND.getCode());
+        result.setMessage(ResultCode.NOT_FOUND.getMessage());
+        return result;
+    }
+
+    public static <T> Result<T> BAD_REQUEST() {
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.BAD_REQUEST.getCode());
+        result.setMessage(ResultCode.BAD_REQUEST.getMessage());
         return result;
     }
 }

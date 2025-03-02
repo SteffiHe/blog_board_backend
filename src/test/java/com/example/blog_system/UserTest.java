@@ -3,6 +3,7 @@ package com.example.blog_system;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @SpringBootTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Slf4j
 public class UserTest {
 
     @Autowired
@@ -35,6 +37,7 @@ public class UserTest {
     @Test
     void testGetAllUsers() {
         List<User> users = userMapper.getAllUsers();
+        log.info(users.toString());
         assertFalse(users.isEmpty());
     }
 
