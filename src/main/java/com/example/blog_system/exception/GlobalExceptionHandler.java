@@ -15,6 +15,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public <T> Result <T> exceptionHandler(Exception e) {
-        return Result.failure(ResultCode.FAILED.getCode(), "An unexpected error occurred: " + e.getMessage());
+        return Result.failure( "An unexpected error occurred: " + e.getMessage());
     }
 }

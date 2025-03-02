@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserInfoVO {
+public class UserVO {
     private String username;
     private String email;
 

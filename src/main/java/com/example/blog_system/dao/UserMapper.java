@@ -10,6 +10,9 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-   // @Select("select * from user")
    List<User> getAllUsers();
+   User getUserByUsername(@Param("username") String username);
+   int deleteUserByUsername(@Param("username") String username);
+   int insertUser(User user);
+   int updateUser(User user);
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,12 +31,12 @@ public class User implements Serializable {
     private String password;
 
     @Temporal(TemporalType.DATE)
-    private Date birthday;
+    private LocalDate birthday;
     private String email;
 
     @CreationTimestamp  // Automatically sets creation timestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", updatable = false)
-    private Date createTime;
+    @Column(name = "create_time", updatable = false, nullable = false)
+    private LocalDate createTime;
 
 }

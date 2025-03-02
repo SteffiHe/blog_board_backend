@@ -9,10 +9,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 public enum ResultCode implements IResultCode, Serializable {
     SUCCESS("200", "success"),
-    FAILED("500", "internal server error"),
-    VALIDATE_FAILED("404", "validate failed"),
+    BAD_REQUEST("400", "bad request"),
     UNAUTHORIZED("401", "unauthorized"),
-    FORBIDDEN("403", "forbidden");
+    NOT_FOUND("404", "not found"),
+    FORBIDDEN("403", "forbidden"),
+    FAILED("500", "internal server error");
 
     private String code;
     private String message;
