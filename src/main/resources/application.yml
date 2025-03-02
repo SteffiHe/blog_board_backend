@@ -3,6 +3,14 @@ server:
 spring:
   application:
     name: blog_system_1
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/blogdb
+      database: blogdb
+
+  # PostgreSQL Configuration
   datasource:
     dynamic:
       primary: dataSourcePostgreSql
@@ -42,10 +50,12 @@ spring:
         #dialect: org.hibernate.dialect.PostgreSQLDialect
   main:
     allow-bean-definition-overriding: true
+  # Data-Uploads
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  # Webserver Settings
   web:
     resources:
       # classpath: it stands for the target directory of the project
@@ -53,10 +63,12 @@ spring:
       static-locations: classpath:/css/, classpath:/js/, classpath:/images/, classpath:/static/, /upload/
   mvc:
     static-path-pattern: /images/**
+# MyBatis Configuration for PostgreSQL
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml
   type-aliases-package: com.example.blog_system.entity
+# API-Documentation (Swagger)
 springdoc:
   api-docs:
     path: /api-docs
