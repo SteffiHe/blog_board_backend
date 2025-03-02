@@ -37,6 +37,6 @@ public class User implements Serializable {
     @CreationTimestamp  // Automatically sets creation timestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time", updatable = false, nullable = false)
-    private LocalDate createTime;
+    private Date createTime;
 
 }
