@@ -1,7 +1,7 @@
 package com.example.blog_system.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
 import java.io.Serializable;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Data
 @Document(collection = "article")
-public class Article implements Serializable {
+public class Article {
 
     @Id
     @Field(targetType = FieldType.OBJECT_ID)
@@ -23,4 +23,7 @@ public class Article implements Serializable {
 
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
+
+
+
 }

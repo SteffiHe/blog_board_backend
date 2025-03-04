@@ -2,6 +2,6 @@ server:
   port: 8080
 spring:
   application:
-    name: blog_system_1
+    name: blog_system
   profiles:
     active: dev
