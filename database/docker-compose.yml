@@ -1,14 +1,27 @@
-version: '3.8'
-services:
-  mongodb:
-    image: mongodb/mongodb-community-server:latest
-    container_name: mongodb_test
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+
+networks:
+  my_custom_network:
+    external: true
 
 volumes:
   mongo_data:
     driver: local
+
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb-container
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    networks:
+      - my_custom_network # please use command "docker network create my_custom_network" to create a network in advance
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+
+
+
