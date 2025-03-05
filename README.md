@@ -1,6 +1,20 @@
 
 # Data
 
+## Docker-Compose
+
+```sh
+# In the docker-compose.yml file, we can configure containers to use this custom network. This way, containers can communicate through the Docker network without affecting the ports on the host machine.
+docker network create my_custom_network
+docker network inspect my_custom_network
+
+docker-compose up -d
+
+# exec into container, then connect to mongodb database
+mongosh --host mongodb -u user -p pass --authenticationDatabase blog
+
+```
+
 ## MongoDB
 
 ```sh

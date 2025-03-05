@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017
+      uri: mongodb://admin:pass@mongodb:27017
       database: blog
   datasource:
     dynamic:
