@@ -2,6 +2,8 @@ package com.example.blog_system.service;
 
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.repository.ArticleRepository;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

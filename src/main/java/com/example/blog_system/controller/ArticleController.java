@@ -17,7 +17,6 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
-
     @RequestMapping(value = "/getAllArticles",method = RequestMethod.GET)
     public List<Article> getAllArticles(){
 

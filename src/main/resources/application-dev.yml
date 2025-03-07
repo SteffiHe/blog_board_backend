@@ -1,4 +1,8 @@
 spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:pass@mongodb:27017
+      database: blog
   datasource:
     dynamic:
       primary: dataSourcePostgreSql
@@ -21,11 +25,6 @@ spring:
             # pool-name: HikariPool-1  # Custom pool name
       aop:
         enabled: true
-  data:
-    mongodb:
-      primary:
-        uri: mongodb://localhost:27017/blogdb
-        database: blogdb
   devtools:
     restart:
       additional-paths: src/main/java # setup which directory to restart
