@@ -1,27 +1,51 @@
 
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    hostname: mongodb-hostname
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mongo_data:/data/db
+      - mongo_log:/var/log/mongodb
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+    networks:
+      - my_network
+    ports:
+      - 27017:27017
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    hostname: postgres-hostname
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/data/db
+      - postgres_log:/var/log/postgres
+      - ./postgres-entrypoint:/docker-entrypoint-initdb.d
+    networks:
+      - my_network
+    ports:
+      - 5433:5432  # Mapping container's internal port 5432 to host 5433
+
 networks:
-  my_custom_network:
-    external: true
+  my_network:
+    driver: bridge
 
 volumes:
   mongo_data:
     driver: local
-
-services:
-  mongodb:
-    image: mongodb/mongodb-community-server:latest
-    container_name: mongodb-container
-    restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=pass
-    networks:
-      - my_custom_network # please use command "docker network create my_custom_network" to create a network in advance
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
-
-
-
+    name: mongo_data
+  mongo_log:
+    driver: local
+    name: mongo_log
+  postgres_data:
+    driver: local
+    name: postgres_data
+  postgres_log:
+    driver: local
+    name: postgres_log
