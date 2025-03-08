@@ -1,6 +1,5 @@
 package com.example.blog_system;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.dto.UserDTO;
 import com.example.blog_system.entity.User;

@@ -15,7 +15,6 @@ db.createUser({
 
 printjson(db.getUsers());
 
-
 db.createCollection('blog');
 db.blog.insertMany([
     {
@@ -53,34 +52,11 @@ db.category.insertMany([
     { _id: "cat_3", name: "SQL-Datenbanken" }
 ])
 
+
+db.createCollection('article');
+db.article.insertOne(
+    { username: 'lucy', title: 'Hello', content: 'Hello World', create_time: new Date()}
+)
+
 print('END #################################################################');
-
-
-// db.getSiblingDB('admin').auth(
-//     process.env.MONGO_INITDB_ROOT_USERNAME,
-//     process.env.MONGO_INITDB_ROOT_PASSWORD
-// );
-//
-// db.createUser(
-//     {
-//         user: "user",
-//         pwd: "pass",
-//         roles: [ { role: "readWrite", db: "blog"} ],
-//         passwordDigestor: "server",
-//     }
-// )
-//
-// db = db.getSiblingDB('blog'); // we can not use "use" statement here to switch db
-
-//
-// // Create the 'article' collection if it doesn't exist
-// db.createCollection('article');
-//
-// // Insert a document into the 'article' collection
-// db.article.insertOne({
-//     username: 'lucy',
-//     title: 'Hello',
-//     content: 'Hello World',
-//     create_time: new Date()
-// });
 
