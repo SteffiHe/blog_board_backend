@@ -86,12 +86,6 @@
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Dynamic Data Source -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
-            <version>4.3.1</version>
-        </dependency>
     </dependencies>
 
     <build>
