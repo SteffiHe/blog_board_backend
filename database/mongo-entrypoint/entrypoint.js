@@ -15,26 +15,6 @@ db.createUser({
 
 printjson(db.getUsers());
 
-db.createCollection('blog');
-db.blog.insertMany([
-    {
-        title: "Why MongoDB?",
-        content: "MongoDB is a flexible NoSQL database...",
-        author_id: 1,
-        category: ["NoSQL"],
-        tags: ["MongoDB" ],
-        create_time: new Date()
-    },
-    {
-        title: "Advantage of PostgreSQL",
-        content: "PostgreSQL is a powerful relational database...",
-        author_id: 2,
-        category: ["SQL" ],
-        tags: ["PostgreSQL"],
-        create_time: new Date()
-    }
-])
-
 db.createCollection('tag');
 db.tag.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.tag.insertMany([
