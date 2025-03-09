@@ -18,45 +18,104 @@ printjson(db.getUsers());
 db.createCollection('blog');
 db.blog.insertMany([
     {
-        _id: "blog_124",
-        title: "Warum MongoDB?",
-        content: "MongoDB ist eine flexible NoSQL-Datenbank...",
-        author_id: 43,
-        category: { id: "cat_2", name: "NoSQL" },
-        tags: [{ id: "tag_1", name: "MongoDB" }],
-        created_at: new Date()
+        title: "Why MongoDB?",
+        content: "MongoDB is a flexible NoSQL database...",
+        author_id: 1,
+        category: ["NoSQL"],
+        tags: ["MongoDB" ],
+        create_time: new Date()
     },
     {
-        _id: "blog_125",
-        title: "Vorteile von PostgreSQL",
-        content: "PostgreSQL ist eine leistungsstarke relationale DB...",
-        author_id: 44,
-        category: { id: "cat_3", name: "SQL-Datenbanken" },
-        tags: [{ id: "tag_2", name: "PostgreSQL" }],
-        created_at: new Date()
+        title: "Advantage of PostgreSQL",
+        content: "PostgreSQL is a powerful relational database...",
+        author_id: 2,
+        category: ["SQL" ],
+        tags: ["PostgreSQL"],
+        create_time: new Date()
     }
 ])
 
-
 db.createCollection('tag');
+db.tag.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.tag.insertMany([
-    { _id: "tag_1", name: "MongoDB" },
-    { _id: "tag_2", name: "PostgreSQL" }
+    { name: "MongoDB", create_time: new Date() },
+    { name: "PostgreSQL", create_time: new Date() }
 ])
 
 
 db.createCollection('category');
+db.category.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.category.insertMany([
-    { _id: "cat_1", name: "Datenbanken" },
-    { _id: "cat_2", name: "NoSQL" },
-    { _id: "cat_3", name: "SQL-Datenbanken" }
+    { name: "Database", create_time: new Date() },
+    { name: "NoSQL", create_time: new Date() },
+    { name: "SQL", create_time: new Date() }
 ])
 
 
+//db.createCollection('article');
+//db.article.insertOne(
+//    { username: 'lucy', title: 'Hello', content: 'Hello World', create_time: new Date()}
+//)
+
+
 db.createCollection('article');
-db.article.insertOne(
-    { username: 'lucy', title: 'Hello', content: 'Hello World', create_time: new Date()}
-)
+db.article.insertMany([
+    {
+        title: "Why MongoDB?",
+        content: "MongoDB is a flexible NoSQL database...",
+        author: "1",
+        category: {
+            "name": "NoSQL"
+        },
+        tags: [
+            { "name": "MongoDB" }
+        ],
+        create_time: new Date()
+    },
+    {
+        title: "Advantage of PostgreSQL",
+        content: "PostgreSQL is a powerful relational database...",
+        author: "2",
+        category: {
+            "name": "SQL"
+        },
+        tags: [
+           { "name": "PostgreSQL" }
+        ],
+        create_time: new Date()
+    }
+])
+
+print('Article update ########################################################');
+
+// Step 1: Update the `category` field in articles
+// Get all unique categories used in the articles collection
+let categories = db.article.distinct("category.name");
+
+categories.forEach(function(categoryName) {
+    let category = db.category.findOne({ name: categoryName });
+
+    if (category) {
+        db.article.updateMany(
+            { "category.name": categoryName },
+            { $set: { "category": category } }
+        );
+    }
+});
+
+// Step 2: Update the `tags` field in articles
+let tags = db.article.distinct("tags.name");
+
+tags.forEach(function(tagName) {
+    let tag = db.tag.findOne({ name: tagName });
+
+    if (tag) {
+        db.article.updateMany(
+            { "tags.name": tagName },
+            { $set: { "tags.$": tag } } // Correct way to update the matching tag in an array
+        );
+    }
+});
 
 print('END #################################################################');
 
