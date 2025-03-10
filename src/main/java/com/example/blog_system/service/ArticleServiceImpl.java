@@ -25,21 +25,35 @@ public class ArticleServiceImpl implements ArticleService {
         this.categoryRepository = categoryRepository;
     }
 
-
+    /**
+     * Retrieves all articles from the database
+     * @return a list of all articles
+     */
     @Override
     public List<Article> getAllArticles() {
-
         return articleRepository.findAll();
     }
 
 
+    /**
+     * Retrieves a list of articles that contain a specified keyword
+     * in their title, content or author's name
+     * @param keyword keyword to search for in an article
+     * @return a list of matching articles
+     */
     public List<Article> getArticleByKeyword(String keyword) {
         return articleRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(
                 keyword, keyword, keyword);
     }
 
+    /**
+     * Saves a new article or updates an existing article
+     * If the article contains tags or a category, they are also saved or updated
+     * @param article article to save or update
+     * @return saved or updated article
+     */
     public Article insertArticle(Article article) {
-        // save Tag
+        // save or update tags
         if (article.getTags() != null) {
             List<Tag> savedTags = new ArrayList<>();
             for (Tag tag : article.getTags()) {
@@ -50,7 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
             article.setTags(savedTags);
         }
 
-        // save Category
+        // save or update category
         if (article.getCategory() != null) {
             article.setCategory(
                     categoryRepository.findByNameIgnoreCase(article.getCategory().getName())
@@ -58,10 +72,14 @@ public class ArticleServiceImpl implements ArticleService {
             );
         }
 
+        // save or update article
         return articleRepository.save(article);
     }
 
-
+    /**
+     * Deletes an article by its ID
+     * @param id id of an article to delete
+     */
     @Override
     public void deleteArticle(String id) {
         articleRepository.deleteById(id);
