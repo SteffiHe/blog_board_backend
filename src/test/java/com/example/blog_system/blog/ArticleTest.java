@@ -4,6 +4,7 @@ package com.example.blog_system.blog;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
 import com.example.blog_system.entity.Tag;
+import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
@@ -15,12 +16,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,9 +50,14 @@ public class ArticleTest {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    private static ArticleSavedEvent receivedEvent;
 
     @BeforeEach
     void setUp() {
+        receivedEvent = null; // Reset event before each test
 
         // Create category
         category = new Category();
@@ -83,6 +89,27 @@ public class ArticleTest {
         categoryService.deleteCategoryByName(category.getName());
         tagService.deleteTagByName(tag1.getName());
         tagService.deleteTagByName(tag2.getName());
+    }
+
+    /**
+     * Event listener that saves the event
+     * @param event event that gets triggered when article is saved
+     */
+    @EventListener
+    public void onArticleSavedEvent(ArticleSavedEvent event) {
+        receivedEvent = event;
+    }
+
+    /**
+     * Tests if the ArticleSavedEvent is correctly triggered
+     */
+    @Test
+    void testArticleSavedEventIsTriggered() {
+        articleService.insertArticle(article1);
+        // The event should be received
+        assertNotNull(receivedEvent, "Das Event sollte nicht null sein!");
+        // Ensure the event contains the correct article
+        assertEquals("Why MySQL?", receivedEvent.article().getTitle());
     }
 
     @Test
