@@ -2,10 +2,12 @@ package com.example.blog_system.service;
 
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Tag;
+import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,12 +19,15 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleRepository articleRepository;
     private TagRepository tagRepository;
     private CategoryRepository categoryRepository;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository, CategoryRepository categoryRepository) {
+    public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
+                               CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -71,6 +76,12 @@ public class ArticleServiceImpl implements ArticleService {
                     .orElseGet(() -> categoryRepository.save( article.getCategory()))
             );
         }
+
+        // save article
+        Article savedArticle = articleRepository.save(article);
+
+        // publish event
+        eventPublisher.publishEvent(new ArticleSavedEvent(savedArticle));
 
         // save or update article
         return articleRepository.save(article);

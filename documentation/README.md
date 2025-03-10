@@ -1,7 +1,7 @@
 
 # Database
 
-MongoDB:Blog, Tag, Category
+MongoDB:Article, Tag, Category
 Postgres: User
 
 ## Docker-Compose
