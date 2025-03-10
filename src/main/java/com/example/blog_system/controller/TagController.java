@@ -17,18 +17,30 @@ public class TagController {
     @Autowired
     private TagService tagService;
 
+    /**
+     * Retrieves all tags
+     * @return a list of all tags
+     */
     @GetMapping("/getAllTags")
     public List<Tag> getAllTags() {
-
         return tagService.getAllTags();
     }
 
+    /**
+     * Retrieves a tag by its name
+     * @param name name of the tag to search for
+     * @return tag if found, otherwise response
+     */
     @GetMapping("/getTagByName/{name}")
     public Optional<Tag> getTagById(@PathVariable String name) {
         return tagService.getTagByName(name);
     }
 
-
+    /**
+     * Creates a new tag if it does not already exist
+     * @param tag tag to create
+     * @return created tag or a conflict response if it already exists
+     */
     @PostMapping("/insertTag")
     public ResponseEntity<?> insertTag(@RequestBody Tag tag) {
 
@@ -43,7 +55,12 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTag);
     }
 
-
+    /**
+     * Updates a tag by name
+     * @param name name of the tag to update
+     * @param tag new tag data
+     * @return updated tag if found or a conflict response
+     */
     @PatchMapping("/updateTagByName/{name}")
     public ResponseEntity<?> updateTag(@PathVariable String name, @RequestBody Tag tag) {
         Optional<Tag> existingTagOptional = tagService.getTagByName(name);
@@ -63,6 +80,11 @@ public class TagController {
         }
     }
 
+    /**
+     * Deletes a tag by name
+     * @param name name of the tag to delete
+     * @return success message if found, otherwise response
+     */
     @DeleteMapping("/deleteTagByName/{name}")
     public ResponseEntity<?> deleteTag(@PathVariable String name) {
         Optional<Tag> existingTagOptional = tagService.getTagByName(name);

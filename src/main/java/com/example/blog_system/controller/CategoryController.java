@@ -19,21 +19,29 @@ public class CategoryController {
     private CategoryService categoryService;
 
     /**
-     * Find all categories
-     * @return list of categories
+     * Retrieves all categories
+     * @return list of all categories
      */
     @GetMapping("/getAllCategories")
     public List<Category> getAllCategories(){
         return categoryService.getAllCategories();
     }
 
-
+    /**
+     * Retrieves a category by its name
+     * @param name name of the category
+     * @return category if found
+     */
     @GetMapping("/getCategoryByName/{name}")
     public Optional<Category> getCategoryById(@PathVariable String name) {
         return categoryService.getCategoryByName(name);
     }
 
-
+    /**
+     * Creates a new category
+     * @param category category to create
+     * @return created category or a conflict response if it already exists
+     */
     @PostMapping("/insertCategory")
     public ResponseEntity<?> createCategory(@RequestBody Category category) {
 
@@ -48,7 +56,12 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
-
+    /**
+     * Updates a category by name
+     * @param name name of the category to update
+     * @param category new category data
+     * @return updated category if found or a conflict response
+     */
     @PatchMapping("/updateCategoryByName/{name}")
     public ResponseEntity<?> updateCategory(@PathVariable String name, @RequestBody Category category) {
         Optional<Category> existingCategoryOptional = categoryService.getCategoryByName(name);
@@ -68,6 +81,11 @@ public class CategoryController {
         }
     }
 
+    /**
+     * Deletes a category by name
+     * @param name name of the category to delete
+     * @return success message if found, otherwise response
+     */
     @DeleteMapping("/deleteCategoryByName/{name}")
     public ResponseEntity<?> deleteCategory(@PathVariable String name) {
         Optional<Category> existingCategoryOptional = categoryService.getCategoryByName(name);

@@ -16,37 +16,45 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     /**
-     * Find all categories
-     * @return all categories
+     * Retrieves all categories from the database
+     * @return a list of all categories
      */
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
+    /**
+     * Retrieves a category by its name
+     * @param name name of a category
+     * @return optional containing the found category or empty if not found
+     */
     public Optional<Category> getCategoryByName(String name){
-
         return categoryRepository.findByNameIgnoreCase(name);
     }
 
+    /**
+     * Creates and saves a new category in the database
+     * @param category category of an article to be created
+     * @return saved category
+     */
     public Category insertCategory(Category category) {
         return categoryRepository.save(category);
     }
 
+    /**
+     * Updates an existing category in the database by name
+     * @param category category of an article
+     * @return updated category
+     */
     public Category updateCategoryByName(Category category) {
         return categoryRepository.save(category);
     }
 
-
+    /**
+     * Deletes a category from the database by its name
+     * @param name name of the category to be deleted
+     */
     public void deleteCategoryByName(String name) {
         categoryRepository.deleteByNameIgnoreCase(name);
-    }
-
-    /**
-     * Save or update a category
-     * @param category category of a blog
-     * @return saved or updated category
-     */
-    public Category saveOrUpdateCategory(Category category) {
-        return categoryRepository.save(category);
     }
 }

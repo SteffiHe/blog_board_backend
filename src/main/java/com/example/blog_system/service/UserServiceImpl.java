@@ -20,12 +20,20 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+    /**
+     * Retrieve a list of all users from the database
+     * @return a list of User objects representing all users
+     */
     @Override
     public List<User> getAllUsers() {
         List<User> userList = userMapper.getAllUsers();
         return userList;
     }
 
+    /**
+     * Retrieves a list of all users and converts them to UserVO objects
+     * @return a list of UserVO objects representing all users
+     */
     @Override
     public List<UserVO> getAllUsersVO() {
 
@@ -40,12 +48,22 @@ public class UserServiceImpl implements UserService {
         return userVOList;
     }
 
+    /**
+     * Retrieves a user from the database by username
+     * @param username username of a user to retrieve
+     * @return user object if found, otherwise null
+     */
     @Override
     public User getUserByUsername(String username) {
         User user = userMapper.getUserByUsername(username);
         return user;
     }
 
+    /**
+     * Retrieves a user by username and returns it as a UserVO
+     * @param username username of a user to retrieve
+     * @return userVO object containing the user's information
+     */
     @Override
     public UserVO getUserByUsernameVO(String username) {
         User user = this.getUserByUsername(username);
@@ -54,12 +72,22 @@ public class UserServiceImpl implements UserService {
         return userVO;
     }
 
+    /**
+     * Deletes a user from the database by username
+     * @param username username of the user to be deleted
+     * @return true if the user was successfully deleted, otherwise false
+     */
     @Override
     public boolean deleteUserByUsername(String username) {
         int rowsAffected = userMapper.deleteUserByUsername(username);
         return rowsAffected > 0;
     }
 
+    /**
+     * Insert a new user into the database
+     * @param userDTO DTO object containing user data
+     * @return true if the user was successfully inserted, otherwise false
+     */
     @Override
     public boolean insertUser(UserDTO userDTO) {
         // Logic to convert UserDTO to User entity and save it to DB

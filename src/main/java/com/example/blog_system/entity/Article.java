@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Class to represent an article
+ */
 @Data
 @Document(collection = "article")
 public class Article {
