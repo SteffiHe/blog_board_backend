@@ -60,13 +60,10 @@ public class ArticleServiceImpl implements ArticleService {
     public Article insertArticle(Article article) {
         // save or update tags
         if (article.getTags() != null) {
-            List<Tag> savedTags = new ArrayList<>();
-            for (Tag tag : article.getTags()) {
-                savedTags.add(
-                        tagRepository.findByNameIgnoreCase(tag.getName()).orElseGet(() -> tagRepository.save(tag))
-                );
-            }
-            article.setTags(savedTags);
+            article.setTags(article.getTags().stream()
+                    .map(tag -> tagRepository.findByNameIgnoreCase(tag.getName())
+                            .stream().findFirst().orElseGet(() -> tagRepository.save(tag)))
+                    .toList());
         }
 
         // save or update category
@@ -84,7 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
         eventPublisher.publishEvent(new ArticleSavedEvent(savedArticle));
 
         // save or update article
-        return articleRepository.save(article);
+        return savedArticle;
     }
 
     /**

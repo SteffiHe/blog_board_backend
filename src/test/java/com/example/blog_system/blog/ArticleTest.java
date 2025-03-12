@@ -1,9 +1,9 @@
 package com.example.blog_system.blog;
 
-
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
 import com.example.blog_system.entity.Tag;
+import com.example.blog_system.event.ArticleEventListener;
 import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional  // Ensures rollback after each test
 public class ArticleTest {
 
-
     @Autowired
     private ArticleService articleService;
 
@@ -51,13 +50,10 @@ public class ArticleTest {
     private TagService tagService;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    private static ArticleSavedEvent receivedEvent;
+    private ArticleEventListener articleEventListener;
 
     @BeforeEach
     void setUp() {
-        receivedEvent = null; // Reset event before each test
 
         // Create category
         category = new Category();
@@ -92,29 +88,19 @@ public class ArticleTest {
     }
 
     /**
-     * Event listener that saves the event
-     * @param event event that gets triggered when article is saved
-     */
-    @EventListener
-    public void onArticleSavedEvent(ArticleSavedEvent event) {
-        receivedEvent = event;
-    }
-
-    /**
      * Tests if the ArticleSavedEvent is correctly triggered
      */
     @Test
     void testArticleSavedEventIsTriggered() {
         articleService.insertArticle(article1);
         // The event should be received
-        assertNotNull(receivedEvent, "Das Event sollte nicht null sein!");
+        assertNotNull(articleEventListener.getReceivedEvent(), "Das Event sollte nicht null sein!");
         // Ensure the event contains the correct article
-        assertEquals("Why MySQL?", receivedEvent.article().getTitle());
+        assertEquals("Why MySQL?", articleEventListener.getReceivedEvent().article().getTitle());
     }
 
     @Test
     void testGetArticleByKeyword() {
-
         List<Article> articles = articleService.getArticleByKeyword("Alice");
         assertEquals(1, articles.size());
         assertEquals("Alice", articles.get(0).getAuthor());
