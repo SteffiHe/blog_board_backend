@@ -8,7 +8,7 @@
 CREATE TABLE public.user
 (
     -- id SERIAL
-    id UUID DEFAULT gen_random_uuid() PRIMARY key NOT NULL,
+    id SERIAL PRIMARY key NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) DEFAULT NULL,
     birthday Date  DEFAULT NULL,
