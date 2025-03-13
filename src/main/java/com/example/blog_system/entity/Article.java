@@ -19,7 +19,6 @@ import java.util.UUID;
 public class Article {
 
     @Id
-    @Field(targetType = FieldType.OBJECT_ID)
     private String id; //unique id
 
     private String title; //title of the blog
