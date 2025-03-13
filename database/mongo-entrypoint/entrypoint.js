@@ -18,9 +18,13 @@ printjson(db.getUsers());
 db.createCollection('tag');
 db.tag.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.tag.insertMany([
-    { name: "MongoDB", create_time: new Date() },
-    { name: "PostgreSQL", create_time: new Date() },
-    { name: "Database", create_time: new Date() }
+    { name: "Relational DB", create_time: new Date() },
+    { name: "Document DB", create_time: new Date() },
+    { name: "Time-Series DB", create_time: new Date() },
+    { name: "Object Storage", create_time: new Date() },
+    { name: "Key-Value Store", create_time: new Date() },
+    { name: "High Concurrency", create_time: new Date() },
+    { name: "Replication Set", create_time: new Date() }
 ])
 
 
@@ -28,7 +32,8 @@ db.createCollection('category');
 db.category.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.category.insertMany([
     { name: "NoSQL", create_time: new Date() },
-    { name: "SQL", create_time: new Date() }
+    { name: "SQL", create_time: new Date() },
+    { name: "Other", create_time: new Date() }
 ])
 
 
@@ -49,8 +54,8 @@ db.article.insertMany([
             "name": "NoSQL"
         },
         tags: [
-            { "name": "MongoDB" },
-            { "name": "Database" }
+            { "name": "Document DB" },
+            { "name": "Replication Set" }
         ],
 
         create_time: new Date()
@@ -64,11 +69,38 @@ db.article.insertMany([
             "name": "SQL"
         },
         tags: [
-            { "name": "PostgreSQL" },
-            { "name": "Database" }
+            { "name": "High concurrency" },
+            { "name": "Relational DB" }
+        ],
+        create_time: new Date()
+    },
+    {
+        _id: "a3",
+        title: "Why ElasticSearch?",
+        content: "ElasticSearch is a powerful NoSQL database...",
+        author: "1" ,
+        category: {
+            "name": "NoSQL"
+        },
+        tags: [
+            { "name": "Document DB" }
+        ],
+        create_time: new Date()
+    },
+    {
+        _id: "a4",
+        title: "Prometheus",
+        content: "Prometheus is a powerful time-series database designed for monitoring and alerting. Originally developed at SoundCloud, it has since become a widely adopted open-source project under the Cloud Native Computing Foundation (CNCF).The Key Features of Prometheus contains Time-Series Data Storage, Multi-Dimensional Data Model and Powerful Query Language (PromQL)",
+        author: "2" ,
+        category: {
+            "name": "Other"
+        },
+        tags: [
+            { "name": "Time-Series DB" }
         ],
         create_time: new Date()
     }
+
 ])
 
 print('Article update ########################################################');
