@@ -19,14 +19,14 @@ db.createCollection('tag');
 db.tag.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.tag.insertMany([
     { name: "MongoDB", create_time: new Date() },
-    { name: "PostgreSQL", create_time: new Date() }
+    { name: "PostgreSQL", create_time: new Date() },
+    { name: "Database", create_time: new Date() }
 ])
 
 
 db.createCollection('category');
 db.category.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
 db.category.insertMany([
-    { name: "Database", create_time: new Date() },
     { name: "NoSQL", create_time: new Date() },
     { name: "SQL", create_time: new Date() }
 ])
@@ -41,6 +41,7 @@ db.category.insertMany([
 db.createCollection('article');
 db.article.insertMany([
     {
+        _id: "a1",
         title: "Why MongoDB?",
         content: "MongoDB is a flexible NoSQL database...",
         author: "1",
@@ -48,12 +49,14 @@ db.article.insertMany([
             "name": "NoSQL"
         },
         tags: [
-            { "name": "MongoDB" }
+            { "name": "MongoDB" },
+            { "name": "Database" }
         ],
 
         create_time: new Date()
     },
     {
+        _id: "a2",
         title: "Advantage of PostgreSQL",
         content: "PostgreSQL is a powerful relational database...",
         author: "2",
@@ -61,7 +64,8 @@ db.article.insertMany([
             "name": "SQL"
         },
         tags: [
-           { "name": "PostgreSQL" }
+            { "name": "PostgreSQL" },
+            { "name": "Database" }
         ],
         create_time: new Date()
     }
@@ -99,4 +103,3 @@ tags.forEach(function(tagName) {
 });
 
 print('END #################################################################');
-
