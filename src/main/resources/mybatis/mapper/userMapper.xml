@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.blog_system.dao.UserMapper">
     <resultMap type="com.example.blog_system.entity.User" id="UserMap">
-        <result property="id" column="id" typeHandler="com.example.blog_system.typehandler.UUIDTypeHandler"/>
+        <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="username" column="username" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="birthday" column="birthday" jdbcType="TIMESTAMP"/>

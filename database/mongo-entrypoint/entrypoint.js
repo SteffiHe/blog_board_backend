@@ -50,6 +50,7 @@ db.article.insertMany([
         tags: [
             { "name": "MongoDB" }
         ],
+
         create_time: new Date()
     },
     {
