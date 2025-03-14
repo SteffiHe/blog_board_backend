@@ -1,16 +1,20 @@
 package com.example.blog_system.service;
 
 import com.example.blog_system.entity.Article;
-import com.example.blog_system.entity.Tag;
 import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
+import com.example.blog_system.strategy.ArticleSortByAuthor;
+import com.example.blog_system.strategy.ArticleSortByCreateTime;
+import com.example.blog_system.strategy.ArticleSortByTitle;
+import com.example.blog_system.strategy.ArticleSortStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -20,14 +24,17 @@ public class ArticleServiceImpl implements ArticleService {
     private TagRepository tagRepository;
     private CategoryRepository categoryRepository;
     private ApplicationEventPublisher eventPublisher;
+    private ArticleSortStrategy articleSortStrategy;
 
     @Autowired
     public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
-                               CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher) {
+                               CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher,
+                               @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.eventPublisher = eventPublisher;
+        this.articleSortStrategy = articleSortStrategy;
     }
 
     /**
@@ -38,7 +45,6 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getAllArticles() {
         return articleRepository.findAll();
     }
-
 
     /**
      * Retrieves a list of articles that contain a specified keyword
@@ -93,5 +99,18 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.deleteById(id);
     }
 
+    @Override
+    public List<Article> getAllArticlesSorted(String sortBy) {
+        List<Article> articles = articleRepository.findAll();
 
+        // Strategy pattern implementation
+        ArticleSortStrategy strategy = switch (sortBy.toLowerCase()) {
+            case "title" -> new ArticleSortByTitle();
+            case "createtime" -> new ArticleSortByCreateTime();
+            case "author" -> new ArticleSortByAuthor();
+            default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
+        };
+
+        return strategy.sort(articles);
+    }
 }

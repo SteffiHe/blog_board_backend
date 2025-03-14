@@ -26,6 +26,18 @@ public class ArticleController {
     }
 
     /**
+     * Retrieves all articles with optional sorting
+     * @param sortBy sorting criteria (title, createTime, author)
+     * @return a list of sorted articles
+     */
+    @RequestMapping(value = "/getAllArticlesSorted",method = RequestMethod.GET)
+    public ResponseEntity<List<Article>> getAllArticlesSorted(@RequestParam(defaultValue = "createTime") String sortBy) {
+        List<Article> sortedArticles = articleService.getAllArticlesSorted(sortBy);
+        return ResponseEntity.ok(sortedArticles);
+    }
+
+
+    /**
      * Retrieves articles containing a specified keyword
      * in their title, content or author
      * @param keyword keyword to search for
