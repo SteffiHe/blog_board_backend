@@ -54,8 +54,10 @@ public class ArticleTest {
 
     @BeforeEach
     void setUp() {
+        // Clear data to avoid duplicates
         tagRepository.deleteAll();
         categoryRepository.deleteAll();
+        articleRepository.deleteAll();
 
         // Create category
         category = new Category();
