@@ -54,6 +54,8 @@ public class ArticleTest {
 
     @BeforeEach
     void setUp() {
+        tagRepository.deleteAll();
+        categoryRepository.deleteAll();
 
         // Create category
         category = new Category();
@@ -104,6 +106,54 @@ public class ArticleTest {
         List<Article> articles = articleService.getArticleByKeyword("Alice");
         assertEquals(1, articles.size());
         assertEquals("Alice", articles.get(0).getAuthor());
+    }
+
+    @Test
+    void testSortArticlesByTitle() {
+        Article article2 = new Article();
+        article2.setTitle("A Guide to SQL");
+        article2.setContent("SQL is essential for databases...");
+        article2.setAuthor("Bob");
+        article2.setCategory(category);
+        article2.setTags(Arrays.asList(tag1));
+        articleService.insertArticle(article2);
+
+        List<Article> sortedArticles = articleService.getAllArticlesSorted("title");
+
+        assertEquals("A Guide to SQL", sortedArticles.get(0).getTitle());
+        assertEquals("Why MySQL?", sortedArticles.get(1).getTitle());
+    }
+
+    @Test
+    void testSortArticlesByCreateTime() {
+        Article article2 = new Article();
+        article2.setTitle("Advanced SQL Techniques");
+        article2.setContent("Deep dive into SQL...");
+        article2.setAuthor("Charlie");
+        article2.setCategory(category);
+        article2.setTags(Arrays.asList(tag2));
+        article2 = articleService.insertArticle(article2);
+
+        List<Article> sortedArticles = articleService.getAllArticlesSorted("createtime");
+
+        assertEquals(article1.getId(), sortedArticles.get(0).getId());
+        assertEquals(article2.getId(), sortedArticles.get(1).getId());
+    }
+
+    @Test
+    void testSortArticlesByAuthor() {
+        Article article2 = new Article();
+        article2.setTitle("Database Indexing");
+        article2.setContent("Indexing improves query speed...");
+        article2.setAuthor("Aaron");
+        article2.setCategory(category);
+        article2.setTags(Arrays.asList(tag1, tag2));
+        articleService.insertArticle(article2);
+
+        List<Article> sortedArticles = articleService.getAllArticlesSorted("author");
+
+        assertEquals("Aaron", sortedArticles.get(0).getAuthor());
+        assertEquals("Alice", sortedArticles.get(1).getAuthor());
     }
 
 }
