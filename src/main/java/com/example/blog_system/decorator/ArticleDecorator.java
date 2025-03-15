@@ -1,4 +1,13 @@
 package com.example.blog_system.decorator;
 
-public class ArticleDecorator {
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public abstract class ArticleDecorator implements Article {
+    protected final Article decoratedArticle;
+
+    @Override
+    public String getContent() {
+        return decoratedArticle.getContent();
+    }
 }

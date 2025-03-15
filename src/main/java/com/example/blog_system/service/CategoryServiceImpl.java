@@ -1,7 +1,6 @@
 package com.example.blog_system.service;
 
 import com.example.blog_system.entity.Category;
-import com.example.blog_system.entity.Tag;
 import com.example.blog_system.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
      * @return saved category
      */
     public Category insertCategory(Category category) {
+        if (categoryRepository.findByNameIgnoreCase(category.getName()).isPresent()) {
+            throw new IllegalArgumentException("Kategorie '" + category.getName() + "' existiert bereits!");
+        }
         return categoryRepository.save(category);
     }
 

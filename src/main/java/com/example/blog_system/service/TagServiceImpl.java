@@ -36,6 +36,9 @@ public class TagServiceImpl implements TagService {
      * @return created tag
      */
     public Tag insertTag(Tag tag) {
+        if (tagRepository.findByNameIgnoreCase(tag.getName()).isPresent()) {
+            throw new IllegalArgumentException("Tag '" + tag.getName() + "' existiert bereits!");
+        }
         return tagRepository.save(tag);
     }
 
@@ -55,4 +58,5 @@ public class TagServiceImpl implements TagService {
     public void deleteTagByName(String name) {
         tagRepository.deleteByNameIgnoreCase(name);
     }
+
 }
