@@ -8,10 +8,13 @@ import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
 import jakarta.persistence.EntityNotFoundException;
+<<<<<<< HEAD
 import com.example.blog_system.strategy.ArticleSortByAuthor;
 import com.example.blog_system.strategy.ArticleSortByCreateTime;
 import com.example.blog_system.strategy.ArticleSortByTitle;
 import com.example.blog_system.strategy.ArticleSortStrategy;
+=======
+>>>>>>> 506d713aa5861831559aabb53630b32f5152a1d6
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -141,6 +144,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.deleteById(id);
 
         return article;
+<<<<<<< HEAD
     }
 
 
@@ -171,7 +175,36 @@ public class ArticleServiceImpl implements ArticleService {
 
         // Save the updated article
         return articleRepository.save(article);
+=======
+>>>>>>> 506d713aa5861831559aabb53630b32f5152a1d6
     }
 
 
+    /**
+     * Updates the category of an existing article.
+     * If the category does not exist, it will be created and assigned to the article.
+     * @param articleId the ID of the article to update
+     * @param category the new category
+     * @return the updated article
+     */
+    public Article updateArticleCategory(String articleId, Category category) {
+        // Find the article by ID
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + articleId));
+
+        // Find or create the category
+        Category existingCategory = categoryRepository.findByNameIgnoreCase(category.getName())
+                .orElseGet(() -> {
+                    // 如果不存在，则创建新的 Category
+                    Category newCategory = new Category();
+                    newCategory.setName(category.getName());
+                    return categoryRepository.save(newCategory);
+                });
+
+        // Update the article's category
+        article.setCategory(existingCategory);
+
+        // Save the updated article
+        return articleRepository.save(article);
+    }
 }

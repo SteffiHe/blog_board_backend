@@ -41,6 +41,7 @@ public class Article {
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
 
+<<<<<<< HEAD
 }
 
 
@@ -54,4 +55,6 @@ class ArticleEntityListener implements BeforeConvertCallback<Article> {
         }
         return article;
     }
+=======
+>>>>>>> 506d713aa5861831559aabb53630b32f5152a1d6
 }

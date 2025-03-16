@@ -29,6 +29,7 @@ public class ArticleController {
 
 
 
+<<<<<<< HEAD
     /**
      * Retrieves all articles with optional sorting
      * @param sortBy sorting criteria (title, createTime, author)
@@ -41,6 +42,8 @@ public class ArticleController {
     }
 
 
+=======
+>>>>>>> 506d713aa5861831559aabb53630b32f5152a1d6
     /**
      * Retrieves articles containing a specified keyword
      * in their title, content or author
