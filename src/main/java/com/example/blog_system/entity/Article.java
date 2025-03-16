@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.*;
+import org.springframework.data.mongodb.core.mapping.event.BeforeConvertCallback;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -39,4 +41,17 @@ public class Article {
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
 
+}
+
+
+// Ensure createTime is set automatically before saving the document
+@Component
+class ArticleEntityListener implements BeforeConvertCallback<Article> {
+    @Override
+    public Article onBeforeConvert(Article article, String collection) {
+        if (article.getCreateTime() == null) {
+            article.setCreateTime(new Date());
+        }
+        return article;
+    }
 }

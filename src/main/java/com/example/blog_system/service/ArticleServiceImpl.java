@@ -66,6 +66,21 @@ public class ArticleServiceImpl implements ArticleService {
                 keyword, keyword, keyword);
     }
 
+    @Override
+    public List<Article> getAllArticlesSorted(String sortBy) {
+        List<Article> articles = articleRepository.findAll();
+
+        // Strategy pattern implementation
+        ArticleSortStrategy strategy = switch (sortBy.toLowerCase()) {
+            case "title" -> new ArticleSortByTitle();
+            case "createtime" -> new ArticleSortByCreateTime();
+            case "author" -> new ArticleSortByAuthor();
+            default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
+        };
+
+        return strategy.sort(articles);
+    }
+
     /**
      * Saves a new article or updates an existing article
      * If the article contains tags or a category, they are also saved or updated
@@ -128,20 +143,8 @@ public class ArticleServiceImpl implements ArticleService {
         return article;
     }
 
-    @Override
-    public List<Article> getAllArticlesSorted(String sortBy) {
-        List<Article> articles = articleRepository.findAll();
 
-        // Strategy pattern implementation
-        ArticleSortStrategy strategy = switch (sortBy.toLowerCase()) {
-            case "title" -> new ArticleSortByTitle();
-            case "createtime" -> new ArticleSortByCreateTime();
-            case "author" -> new ArticleSortByAuthor();
-            default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
-        };
 
-        return strategy.sort(articles);
-    }
     /**
      * Updates the category of an existing article.
      * If the category does not exist, it will be created and assigned to the article.
@@ -169,4 +172,6 @@ public class ArticleServiceImpl implements ArticleService {
         // Save the updated article
         return articleRepository.save(article);
     }
+
+
 }

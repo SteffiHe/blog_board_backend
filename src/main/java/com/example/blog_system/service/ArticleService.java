@@ -13,13 +13,13 @@ public interface ArticleService {
 
     Article getArticleById(String id);
 
+    // Strategy pattern implementation
+    List<Article> getAllArticlesSorted(String sortBy);
+
     Article insertArticle(Article article);
 
-    void deleteArticle(String id);
     Article deleteArticle(String id);
 
     Article updateArticleCategory(String articleId, Category category);
 
-    // Strategy pattern implementation
-    List<Article> getAllArticlesSorted(String sortBy);
 }
