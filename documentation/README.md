@@ -8,7 +8,7 @@ Postgres: User
 
 ```sh
 docker-compose up -d
-docker-compose down --remove-orphans --volumes
+docker-compose down --remove-orphans --volumes 
 
 # enter the  mongodb-container
 docker exec -it mongodb-container mongosh -authenticationDatabase "blog" -u "user" -p "pass"
