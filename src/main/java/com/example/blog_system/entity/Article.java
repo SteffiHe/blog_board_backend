@@ -30,10 +30,10 @@ public class Article {
 
     @DBRef
     @NotNull(message = "Category cannot be empty")
-    private Category category; //blog has one category
+    private Category category; //blog has one category (cannot be null)
 
     @DBRef(lazy = true)
-    private List<Tag> tags; //blog has many tags
+    private List<Tag> tags; //blog has many tags (can be null)
 
     @CreatedDate
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
