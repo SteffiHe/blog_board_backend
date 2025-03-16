@@ -1,6 +1,7 @@
 package com.example.blog_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -28,13 +29,14 @@ public class Article {
     private String author; //author of the blog
 
     @DBRef
+    @NotNull(message = "Category cannot be empty")
     private Category category; //blog has one category
-    @DBRef
+
+    @DBRef(lazy = true)
     private List<Tag> tags; //blog has many tags
 
     @CreatedDate
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
-
 
 }
