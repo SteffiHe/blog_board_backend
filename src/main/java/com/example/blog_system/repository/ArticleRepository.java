@@ -2,9 +2,11 @@ package com.example.blog_system.repository;
 
 import com.example.blog_system.entity.Article;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ArticleRepository extends MongoRepository<Article, String> {
@@ -20,4 +22,6 @@ public interface ArticleRepository extends MongoRepository<Article, String> {
     List<Article> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(
             String title, String content, String authorId);
 
+    @Query(value = "{ '_id': { $regex: '^a[0-9]+' } }", fields = "{ '_id': 1}")
+    List<String> findAllArticleIds();
 }

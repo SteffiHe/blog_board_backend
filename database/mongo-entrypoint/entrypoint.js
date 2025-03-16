@@ -69,7 +69,7 @@ db.article.insertMany([
             "name": "SQL"
         },
         tags: [
-            { "name": "High concurrency" },
+            { "name": "High Concurrency" },
             { "name": "Relational DB" }
         ],
         create_time: new Date()

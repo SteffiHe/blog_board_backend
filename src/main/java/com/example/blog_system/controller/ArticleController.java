@@ -1,6 +1,7 @@
 package com.example.blog_system.controller;
 
 import com.example.blog_system.entity.Article;
+import com.example.blog_system.entity.Category;
 import com.example.blog_system.result.Result;
 import com.example.blog_system.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class ArticleController {
     public List<Article> getAllArticles(){
         return articleService.getAllArticles();
     }
+
+
+
 
     /**
      * Retrieves all articles with optional sorting
@@ -61,13 +65,29 @@ public class ArticleController {
     }
 
     /**
+     * Updates the category of an existing article.
+     * @param articleId the ID of the article to update
+     * @param category the new category
+     * @return ResponseEntity with the updated article
+     */
+    @PatchMapping("/updateCategory/{articleId}")
+    public ResponseEntity<Article> updateArticleCategory(
+            @PathVariable String articleId,
+            @RequestBody Category category) {
+
+        Article updatedArticle = articleService.updateArticleCategory(articleId, category);
+        return ResponseEntity.ok(updatedArticle);
+    }
+
+    /**
      * Deletes an article by its ID
      * @param id id of the article to delete
      */
     @RequestMapping(path = "/byId/{id}",method = RequestMethod.DELETE)
-    public void deleteArticle(@PathVariable String id) {
+    public ResponseEntity<Void>  deleteArticle(@PathVariable String id) {
 
         articleService.deleteArticle(id);
+        return ResponseEntity.noContent().build(); // HTTP 204 No Content
     }
 
 
