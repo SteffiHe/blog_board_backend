@@ -7,10 +7,7 @@ import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
-import com.example.blog_system.strategy.ArticleSortByAuthor;
-import com.example.blog_system.strategy.ArticleSortByCreateTime;
-import com.example.blog_system.strategy.ArticleSortByTitle;
-import com.example.blog_system.strategy.ArticleSortStrategy;
+import com.example.blog_system.strategy.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,6 +71,10 @@ public class ArticleServiceImpl implements ArticleService {
         return articles;
     }
 
+    /**
+     * Retrieves all articles from the database with authorname DTO
+     * @return a list of all articles with authorname DTO
+     */
     @Override
     public List<ArticleDTO> getAllArticlesWithAuthornameDTO() {
         List<Article> articles = articleRepository.findAll();
@@ -87,6 +88,28 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return articleDTOList;
+    }
+
+    /**
+     * Retrieves all articles from the database and sorts them based on the specified criteria
+     * This method implements the Strategy Pattern to allow dynamic sorting by different attributes
+     * @param sortBy the field to sort the articles by (e.g., "title", "createtime", "author", "id")
+     * @return list of sorted articles
+     */
+    @Override
+    public List<Article> getAllArticlesSorted(String sortBy) {
+        List<Article> articles = articleRepository.findAll();
+
+        // Strategy pattern implementation
+        ArticleSortStrategy strategy = switch (sortBy.toLowerCase()) {
+            case "title" -> new ArticleSortByTitle();
+            case "createtime" -> new ArticleSortByCreateTime();
+            case "author" -> new ArticleSortByAuthor();
+            case "id" -> new ArticleSortById();
+            default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
+        };
+
+        return strategy.sort(articles);
     }
 
     /**
@@ -150,18 +173,5 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.deleteById(id);
     }
 
-    @Override
-    public List<Article> getAllArticlesSorted(String sortBy) {
-        List<Article> articles = articleRepository.findAll();
 
-        // Strategy pattern implementation
-        ArticleSortStrategy strategy = switch (sortBy.toLowerCase()) {
-            case "title" -> new ArticleSortByTitle();
-            case "createtime" -> new ArticleSortByCreateTime();
-            case "author" -> new ArticleSortByAuthor();
-            default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
-        };
-
-        return strategy.sort(articles);
-    }
 }

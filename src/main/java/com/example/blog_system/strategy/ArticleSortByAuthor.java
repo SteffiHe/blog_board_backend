@@ -12,7 +12,8 @@ public class ArticleSortByAuthor implements ArticleSortStrategy {
     @Override
     public List<Article> sort(List<Article> articles) {
         return articles.stream()
-                .sorted(Comparator.comparing(Article::getAuthorName, String.CASE_INSENSITIVE_ORDER))
+                .sorted(Comparator.comparing(Article::getAuthorName, Comparator.nullsLast(String::compareTo)
+                ))
                 .toList();
     }
 }
