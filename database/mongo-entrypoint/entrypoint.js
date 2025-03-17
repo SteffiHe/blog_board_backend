@@ -46,10 +46,10 @@ db.category.insertMany([
 db.createCollection('article');
 db.article.insertMany([
     {
-        _id: "a1",
+        _id: "1",
         title: "Why MongoDB?",
         content: "MongoDB is a flexible NoSQL database...",
-        author: "1",
+        authorId: 1,
         category: {
             "name": "NoSQL"
         },
@@ -61,10 +61,10 @@ db.article.insertMany([
         create_time: new Date()
     },
     {
-        _id: "a2",
+        _id: "2",
         title: "Advantage of PostgreSQL",
         content: "PostgreSQL is a powerful relational database...",
-        author: "2",
+        authorId: 2,
         category: {
             "name": "SQL"
         },
@@ -75,10 +75,10 @@ db.article.insertMany([
         create_time: new Date()
     },
     {
-        _id: "a3",
+        _id: "3",
         title: "Why ElasticSearch?",
         content: "ElasticSearch is a powerful NoSQL database...",
-        author: "1" ,
+        authorId: 1 ,
         category: {
             "name": "NoSQL"
         },
@@ -88,10 +88,10 @@ db.article.insertMany([
         create_time: new Date()
     },
     {
-        _id: "a4",
+        _id: "4",
         title: "Prometheus",
         content: "Prometheus is a powerful time-series database designed for monitoring and alerting. Originally developed at SoundCloud, it has since become a widely adopted open-source project under the Cloud Native Computing Foundation (CNCF).The Key Features of Prometheus contains Time-Series Data Storage, Multi-Dimensional Data Model and Powerful Query Language (PromQL)",
-        author: "2" ,
+        authorId: 2 ,
         category: {
             "name": "Other"
         },

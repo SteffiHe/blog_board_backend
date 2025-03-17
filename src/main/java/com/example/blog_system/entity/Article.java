@@ -24,8 +24,11 @@ public class Article {
     private String title; //title of the blog
     private String content; //content of the blog
 
-    @Field(targetType = FieldType.STRING, name = "author")
-    private String author; //author of the blog
+    /**@Field(targetType = FieldType.STRING, name = "author")
+    private String author; //author of the blog*/
+
+    private Long authorId;
+    private String authorName;
 
     @DBRef
     private Category category; //blog has one category

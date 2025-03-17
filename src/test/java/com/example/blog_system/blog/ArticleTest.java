@@ -1,5 +1,6 @@
 package com.example.blog_system.blog;
 
+import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
 import com.example.blog_system.entity.Tag;
@@ -50,6 +51,9 @@ public class ArticleTest {
     private TagService tagService;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private ArticleEventListener articleEventListener;
 
     @BeforeEach
@@ -77,7 +81,8 @@ public class ArticleTest {
         article1 = new Article();
         article1.setTitle("Why MySQL?");
         article1.setContent("MySQL is a powerful database...");
-        article1.setAuthor("Alice");
+        //article1.setAuthor("Alice");
+        article1.setAuthorId(1L);
         article1.setCategory(category);
         article1.setTags(Arrays.asList(tag1, tag2));
         articleService.insertArticle(article1);
@@ -90,6 +95,20 @@ public class ArticleTest {
         tagService.deleteTagByName(tag1.getName());
         tagService.deleteTagByName(tag2.getName());
     }
+
+    /**
+     * Test to get username by id
+     */
+    @Test
+    public void testGetUsernameById() {
+        Long testId = 1L;
+        System.out.println("Übergebene ID: " + testId);
+
+        String username = userMapper.getUsernameById(testId);
+        System.out.println("Gefundener Username: " + username);
+        assertNotNull(username);
+    }
+
 
     /**
      * Tests if the ArticleSavedEvent is correctly triggered
@@ -107,7 +126,11 @@ public class ArticleTest {
     void testGetArticleByKeyword() {
         List<Article> articles = articleService.getArticleByKeyword("Alice");
         assertEquals(1, articles.size());
-        assertEquals("Alice", articles.get(0).getAuthor());
+        //assertEquals("Alice", articles.get(0).getAuthorName());
+        Long authorId = articles.get(0).getAuthorId();
+        assertNotNull(authorId);
+        String authorName = userMapper.getUsernameById(authorId);
+        assertEquals("lucy", authorName);
     }
 
     @Test
@@ -115,7 +138,7 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("A Guide to SQL");
         article2.setContent("SQL is essential for databases...");
-        article2.setAuthor("Bob");
+        article2.setAuthorId(2L); // example für Bob
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag1));
         articleService.insertArticle(article2);
@@ -131,7 +154,7 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("Advanced SQL Techniques");
         article2.setContent("Deep dive into SQL...");
-        article2.setAuthor("Charlie");
+        article2.setAuthorId(3L); // example for Charlie
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag2));
         article2 = articleService.insertArticle(article2);
@@ -147,15 +170,18 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("Database Indexing");
         article2.setContent("Indexing improves query speed...");
-        article2.setAuthor("Aaron");
+        article2.setAuthorId(2L); // example for Aaron
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag1, tag2));
         articleService.insertArticle(article2);
 
         List<Article> sortedArticles = articleService.getAllArticlesSorted("author");
 
-        assertEquals("Aaron", sortedArticles.get(0).getAuthor());
-        assertEquals("Alice", sortedArticles.get(1).getAuthor());
+        String firstAuthorName = userMapper.getUsernameById(sortedArticles.get(0).getAuthorId());
+        String secondAuthorName = userMapper.getUsernameById(sortedArticles.get(1).getAuthorId());
+
+        assertEquals("Aaron", firstAuthorName);
+        assertEquals("Alice", secondAuthorName);
     }
 
 }

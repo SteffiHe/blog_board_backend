@@ -1,5 +1,7 @@
 package com.example.blog_system.service;
 
+import com.example.blog_system.dao.UserMapper;
+import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
@@ -9,32 +11,37 @@ import com.example.blog_system.strategy.ArticleSortByAuthor;
 import com.example.blog_system.strategy.ArticleSortByCreateTime;
 import com.example.blog_system.strategy.ArticleSortByTitle;
 import com.example.blog_system.strategy.ArticleSortStrategy;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
-    private ArticleRepository articleRepository;
-    private TagRepository tagRepository;
-    private CategoryRepository categoryRepository;
-    private ApplicationEventPublisher eventPublisher;
-    private ArticleSortStrategy articleSortStrategy;
+    private final ArticleRepository articleRepository;
+    private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final ArticleSortStrategy articleSortStrategy;
+    private final UserMapper userMapper;
 
     @Autowired
-    public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
-                               CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher,
-                               @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, TagRepository tagRepository,
+                              CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher,
+                              @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy,
+                              UserMapper userMapper) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.eventPublisher = eventPublisher;
         this.articleSortStrategy = articleSortStrategy;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -47,14 +54,58 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
+     * Retrieves all articles from the database with authorname
+     * @return a list of all articles with authorname
+     */
+    @Override
+    public List<Article> getAllArticlesWithAuthorname() {
+        List<Article> articles = articleRepository.findAll();
+
+        for (Article article : articles) {
+            System.out.println("AuthorId: " + article.getAuthorId());
+            if (article.getAuthorId() != null) {
+                String username = userMapper.getUsernameById(article.getAuthorId());
+                System.out.println("Username: " + username);
+                if (username != null) {
+                    article.setAuthorName(username);
+                }
+            }
+        }
+        return articles;
+    }
+
+    @Override
+    public List<ArticleDTO> getAllArticlesWithAuthornameDTO() {
+        List<Article> articles = articleRepository.findAll();
+        List<ArticleDTO> articleDTOList = new ArrayList<>();
+
+        for (Article article : articles) {
+            ArticleDTO articleDTO = new ArticleDTO();
+            BeanUtils.copyProperties(article, articleDTO); // Kopiert alle gleichnamigen Felder
+            articleDTO.setAuthorName(userMapper.getUsernameById(article.getAuthorId())); // Setzt den Autorennamen
+            articleDTOList.add(articleDTO);
+        }
+
+        return articleDTOList;
+    }
+
+    /**
      * Retrieves a list of articles that contain a specified keyword
      * in their title, content or author's name
      * @param keyword keyword to search for in an article
      * @return a list of matching articles
      */
     public List<Article> getArticleByKeyword(String keyword) {
-        return articleRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(
-                keyword, keyword, keyword);
+        // Search by title and content
+        List<Article> articles = articleRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword);
+        // Search by authorId, if keyword is authorname
+        Long authorId = userMapper.getUserIdByUsername(keyword); // Hole die authorId aus dem Benutzernamen
+        if (authorId != null) {
+            articles.addAll(articleRepository.findByAuthorId(authorId));
+        }
+        // Remove duplicates as there might be overlaps
+        return articles.stream().distinct().toList();
+
     }
 
     /**

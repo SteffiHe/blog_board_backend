@@ -12,6 +12,12 @@
     <select id="getUserByUsername" parameterType="String" resultMap="UserMap">
         SELECT * FROM public.user WHERE username = #{username}
     </select>
+    <select id="getUsernameById" resultType="String">
+        SELECT username FROM public.user WHERE id = #{authorId}
+    </select>
+    <select id="getUserIdByUsername" parameterType="String" resultType="Long">
+        SELECT id FROM public.user WHERE username = #{username}
+    </select>
     <select id="getAllUsers" resultMap="UserMap">
         select * from public.user
     </select>

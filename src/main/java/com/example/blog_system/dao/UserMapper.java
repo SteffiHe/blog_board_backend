@@ -14,4 +14,6 @@ public interface UserMapper {
    int deleteUserByUsername(@Param("username") String username);
    int insertUser(User user);
    int updateUser(User user);
+   String getUsernameById(@Param("authorId") Long authorId);
+   Long getUserIdByUsername(@Param("username") String username);
 }

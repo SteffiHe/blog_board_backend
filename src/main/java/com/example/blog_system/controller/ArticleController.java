@@ -1,5 +1,6 @@
 package com.example.blog_system.controller;
 
+import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.result.Result;
 import com.example.blog_system.service.ArticleService;
@@ -20,9 +21,30 @@ public class ArticleController {
      * Retrieves all articles
      * @return a list of all articles
      */
-    @RequestMapping(value = "/getAllArticles",method = RequestMethod.GET)
-    public List<Article> getAllArticles(){
-        return articleService.getAllArticles();
+    @GetMapping("/getAllArticles")
+    public ResponseEntity<List<Article>> getAllArticles() {
+        List<Article> articles = articleService.getAllArticles();
+        return ResponseEntity.ok(articles);
+    }
+
+    /**
+     * Retrieves all articles with authorname
+     * @return a list of all articles authorname
+     */
+    @GetMapping("/getAllArticlesWithAuthorname")
+    public ResponseEntity<List<Article>> getAllArticlesWithAuthorname() {
+        List<Article> articles = articleService.getAllArticlesWithAuthorname();
+        return ResponseEntity.ok(articles);
+    }
+
+    /**
+     * Retrieves all articles with authorname DTO
+     * @return a list of all articles authorname DTO
+     */
+    @GetMapping("/getAllArticlesWithAuthornameDTO")
+    public ResponseEntity<List<ArticleDTO>> getAllArticlesWithAuthornameDTO() {
+        List<ArticleDTO> articles = articleService.getAllArticlesWithAuthornameDTO();
+        return ResponseEntity.ok(articles);
     }
 
     /**
@@ -43,8 +65,8 @@ public class ArticleController {
      * @param keyword keyword to search for
      * @return a list of matching articles
      */
-    @RequestMapping(value = "/getArticleByKeyword/{keyword}",method = RequestMethod.GET)
-    public ResponseEntity<List<Article>> getArticleByKeyword(@PathVariable String keyword) {
+    @RequestMapping(value = "/getArticleByKeyword",method = RequestMethod.GET)
+    public ResponseEntity<List<Article>> getArticleByKeyword(@RequestParam String keyword) {
         List<Article> articles = articleService.getArticleByKeyword(keyword);
         return ResponseEntity.ok(articles);
     }

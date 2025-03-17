@@ -4,6 +4,7 @@ import com.example.blog_system.entity.Article;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -17,7 +18,16 @@ public interface ArticleRepository extends MongoRepository<Article, String> {
      * @param authorId keyword to search in the author field
      * @return a list of matching articles
      */
-    List<Article> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(
-            String title, String content, String authorId);
+    /**List<Article> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(
+            String title, String content, String authorId);*/
 
+    List<Article> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(
+            String title, String content);
+
+    /**
+     * Find a list of articles by its authorId
+     * @param authorId authorId of the author
+     * @return list of articles associated with an author
+     */
+    List<Article> findByAuthorId(Long authorId);
 }

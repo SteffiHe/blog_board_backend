@@ -44,7 +44,7 @@ db.article.insertMany([
         _id: "a1",
         title: "Why MongoDB?",
         content: "MongoDB is a flexible NoSQL database...",
-        author: "1",
+        authorId: 1,
         category: {
             "name": "NoSQL"
         },
@@ -59,7 +59,7 @@ db.article.insertMany([
         _id: "a2",
         title: "Advantage of PostgreSQL",
         content: "PostgreSQL is a powerful relational database...",
-        author: "2",
+        authorId: 2,
         category: {
             "name": "SQL"
         },
