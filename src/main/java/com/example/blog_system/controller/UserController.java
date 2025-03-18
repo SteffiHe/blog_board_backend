@@ -16,12 +16,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value = "/getAllUsers",method = RequestMethod.GET)
+    public Result getAllUsers(){
+        List<User> userList = userService.getAllUsers();
+        return userList != null ? Result.success(userList) : Result.notFound();
+    }
+
+
     /**
      * Retrieves a list of all users
      * @return Success or failure result containing the user details
      */
-    @RequestMapping(value = "/getAllUsers",method = RequestMethod.GET)
-    public Result getAllUsers(){
+    @RequestMapping(value = "/getAllUsersVO",method = RequestMethod.GET)
+    public Result getAllUsersVO(){
         List<UserVO> userVOList = userService.getAllUsersVO();
         return userVOList != null ? Result.success(userVOList) : Result.notFound();
     }
@@ -31,8 +38,8 @@ public class UserController {
      * @param username username of the user to be found
      * @return Success or failure result containing the user details
      */
-    @RequestMapping(value = "/getUserByUsername", method = RequestMethod.GET)
-    public Result getUserByUsername(@RequestParam String username) {
+    @RequestMapping(value = "/getUserByUsernameVO", method = RequestMethod.GET)
+    public Result getUserByUsernameVO(@RequestParam String username) {
         UserVO userVO = userService.getUserByUsernameVO(username);
         return userVO != null ? Result.success(userVO) : Result.notFound();
     }

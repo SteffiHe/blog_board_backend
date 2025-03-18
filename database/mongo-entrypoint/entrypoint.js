@@ -36,6 +36,14 @@ db.category.insertMany([
     { name: "Other", create_time: new Date() }
 ])
 
+db.createCollection('rate');
+db.rate.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
+db.rate.insertMany([
+    { name: "High", create_time: new Date() },
+    { name: "Medium", create_time: new Date() },
+    { name: "Low", create_time: new Date() }
+])
+
 
 //db.createCollection('article');
 //db.article.insertOne(
@@ -53,6 +61,9 @@ db.article.insertMany([
         category: {
             "name": "NoSQL"
         },
+        rate: {
+            "name": "Low"
+        },
         tags: [
             { "name": "Document DB" },
             { "name": "Replication Set" }
@@ -68,6 +79,9 @@ db.article.insertMany([
         category: {
             "name": "SQL"
         },
+        rate: {
+            "name": "Medium"
+        },
         tags: [
             { "name": "High concurrency" },
             { "name": "Relational DB" }
@@ -82,6 +96,9 @@ db.article.insertMany([
         category: {
             "name": "NoSQL"
         },
+        rate: {
+            "name": "High"
+        },
         tags: [
             { "name": "Document DB" }
         ],
@@ -95,6 +112,9 @@ db.article.insertMany([
         category: {
             "name": "Other"
         },
+        rate: {
+            "name": "Low"
+        },
         tags: [
             { "name": "Time-Series DB" }
         ],
@@ -106,7 +126,6 @@ db.article.insertMany([
 print('Article update ########################################################');
 
 // Step 1: Update the `category` field in articles
-// Get all unique categories used in the articles collection
 let categories = db.article.distinct("category.name");
 
 categories.forEach(function(categoryName) {
@@ -130,6 +149,20 @@ tags.forEach(function(tagName) {
         db.article.updateMany(
             { "tags.name": tagName },
             { $set: { "tags.$": tag } } // Correct way to update the matching tag in an array
+        );
+    }
+});
+
+// Step 3: Update the `rate` field in articles
+let rates = db.article.distinct("rate.name");
+
+rates.forEach(function(rateName) {
+    let rate = db.rate.findOne({ name: rateName });
+
+    if (rate) {
+        db.article.updateMany(
+            { "rate.name": rateName },
+            { $set: { "rate": rate } }
         );
     }
 });

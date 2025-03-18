@@ -12,6 +12,7 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
 
     /**
      * Finds a category by its name
+     *
      * @param name name of the category
      * @return optional containing the found category or empty if not found
      */
@@ -19,6 +20,7 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
 
     /**
      * Deletes a category by its name
+     *
      * @param name name of the category to delete
      */
     void deleteByNameIgnoreCase(String name);

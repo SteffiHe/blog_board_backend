@@ -6,6 +6,7 @@ import com.example.blog_system.entity.Article;
 import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
+import com.example.blog_system.repository.RateRepository;
 import com.example.blog_system.repository.TagRepository;
 import com.example.blog_system.strategy.*;
 import org.springframework.beans.BeanUtils;
@@ -21,21 +22,30 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
-    private final ArticleRepository articleRepository;
-    private final TagRepository tagRepository;
-    private final CategoryRepository categoryRepository;
-    private final ApplicationEventPublisher eventPublisher;
-    private final ArticleSortStrategy articleSortStrategy;
-    private final UserMapper userMapper;
+
+    private ArticleRepository articleRepository;
+
+
+    private TagRepository tagRepository;
+
+
+    private CategoryRepository categoryRepository;
+
+
+    private RateRepository rateRepository;
+
+    private ApplicationEventPublisher eventPublisher;
+    private ArticleSortStrategy articleSortStrategy;
+
 
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository, TagRepository tagRepository,
-                              CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher,
-                              @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy,
-                              UserMapper userMapper) {
+    public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
+                               CategoryRepository categoryRepository, RateRepository rateRepository ,ApplicationEventPublisher eventPublisher,
+                               @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
+        this.rateRepository = rateRepository;
         this.eventPublisher = eventPublisher;
         this.articleSortStrategy = articleSortStrategy;
         this.userMapper = userMapper;
@@ -140,6 +150,21 @@ public class ArticleServiceImpl implements ArticleService {
      * @return saved or updated article
      */
     public Article insertArticle(Article article) {
+        // Get the highest existing ID
+        List<String> ids = articleRepository.findAllArticleIds();
+
+        int maxId = ids.stream()
+                .map(id -> new JSONObject(id).getString("_id")) // Extract the _id field from the JSON string
+                .map(id -> id.substring(1)) // Remove the "a" prefix
+                .mapToInt(Integer::parseInt) // Convert to integer
+                .max()
+                .orElse(1); // Default to 0 if empty
+
+        // Create new ID
+        String newId = "a" + (maxId + 1);
+        article.setId(newId);
+
+
         // save or update tags
         if (article.getTags() != null) {
             article.setTags(article.getTags().stream()
@@ -153,6 +178,17 @@ public class ArticleServiceImpl implements ArticleService {
             article.setCategory(
                     categoryRepository.findByNameIgnoreCase(article.getCategory().getName())
                     .orElseGet(() -> categoryRepository.save( article.getCategory()))
+            );
+        }
+
+
+        //System.out.println(rateRepository.findByNameIgnoreCase(article.getRate().getName()));
+
+        // save or update rate
+        if (article.getRate() != null) {
+            article.setRate(
+                    rateRepository.findByNameIgnoreCase(article.getRate().getName())
+                    .orElseGet(() -> rateRepository.save( article.getRate()))
             );
         }
 
@@ -171,9 +207,80 @@ public class ArticleServiceImpl implements ArticleService {
      * @param id id of an article to delete
      */
     @Override
-    public void deleteArticle(String id) {
+    public Article deleteArticle(String id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + id));
+
         articleRepository.deleteById(id);
+
+        return article;
+
     }
 
+    /**
+     * Updates an existing article with new data
+     * @param id the ID of the article to update
+     * @param article the new article data
+     * @return the updated article
+     */
+    public Article updateArticle(String id, Article article) {
+        Article existingArticle = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + id));
+
+        existingArticle.setTitle(article.getTitle());
+        existingArticle.setContent(article.getContent());
+        existingArticle.setAuthor(article.getAuthor());
+        existingArticle.setCreateTime(existingArticle.getCreateTime());
+
+        // Aktualisiere oder speichere Tags
+        existingArticle.setTags(article.getTags().stream()
+                .map(tag -> tagRepository.findByNameIgnoreCase(tag.getName())
+                        .stream().findFirst().orElseGet(() -> tagRepository.save(tag)))
+                .toList());
+
+        // Aktualisiere oder speichere Kategorie
+        existingArticle.setCategory(
+                categoryRepository.findByNameIgnoreCase(article.getCategory().getName())
+                        .orElseGet(() -> categoryRepository.save(existingArticle.getCategory()))
+        );
+
+        // Aktualisiere oder speichere Rate
+        existingArticle.setRate(
+                rateRepository.findByNameIgnoreCase(article.getRate().getName())
+                        .orElseGet(() -> rateRepository.save(existingArticle.getRate()))
+        );
+
+        Article savedArticle = articleRepository.save(existingArticle);
+        return savedArticle;
+
+    }
+
+    /**
+     * Updates the category of an existing article.
+     * If the category does not exist, it will be created and assigned to the article.
+     * @param articleId the ID of the article to update
+     * @param category the new category
+     * @return the updated article
+     */
+    public Article updateArticleCategory(String articleId, Category category) {
+        // Find the article by ID
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + articleId));
+
+        // Find or create the category
+        Category existingCategory = categoryRepository.findByNameIgnoreCase(category.getName())
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(category.getName());
+                    return categoryRepository.save(newCategory);
+                });
+
+        // Update the article's category
+        article.setCategory(existingCategory);
+
+        // Save the updated article
+        return articleRepository.save(article);
+
+    }
 
 }

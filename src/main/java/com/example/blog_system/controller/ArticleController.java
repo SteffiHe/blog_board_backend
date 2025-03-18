@@ -2,6 +2,7 @@ package com.example.blog_system.controller;
 
 import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
+import com.example.blog_system.entity.Category;
 import com.example.blog_system.result.Result;
 import com.example.blog_system.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,15 @@ public class ArticleController {
     public ResponseEntity<List<Article>> getAllArticles() {
         List<Article> articles = articleService.getAllArticles();
         return ResponseEntity.ok(articles);
+    }
+
+
+    @RequestMapping(value = "/getArticleById/{id}",method = RequestMethod.GET)
+    public Result getArticleById(@PathVariable String id) {
+        Article article = articleService.getArticleById(id);
+        System.out.println("Retrieved Article: " + article);
+
+        return article != null ? Result.success(article) : Result.notFound();
     }
 
     /**
@@ -65,8 +75,8 @@ public class ArticleController {
      * @param keyword keyword to search for
      * @return a list of matching articles
      */
-    @RequestMapping(value = "/getArticleByKeyword",method = RequestMethod.GET)
-    public ResponseEntity<List<Article>> getArticleByKeyword(@RequestParam String keyword) {
+    @RequestMapping(value = "/getArticleByKeyword/{keyword}",method = RequestMethod.GET)
+    public ResponseEntity<List<Article>> getArticleByKeyword(@PathVariable String keyword) {
         List<Article> articles = articleService.getArticleByKeyword(keyword);
         return ResponseEntity.ok(articles);
     }
@@ -82,14 +92,39 @@ public class ArticleController {
         return ResponseEntity.ok(savedArticle);
     }
 
+    @RequestMapping(value = "/updateArticle/{articleId}",method = RequestMethod.PUT)
+    public ResponseEntity<Article> updateArticleCategory(
+            @PathVariable String articleId,
+            @RequestBody Article article) {
+
+        Article updatedArticle = articleService.updateArticle(articleId, article);
+        return ResponseEntity.ok(updatedArticle);
+    }
+
+    /**
+     * Updates the category of an existing article.
+     * @param articleId the ID of the article to update
+     * @param category the new category
+     * @return ResponseEntity with the updated article
+     */
+    @RequestMapping(value = "/updateCategory/{articleId}",method = RequestMethod.PATCH)
+    public ResponseEntity<Article> updateArticle(
+            @PathVariable String articleId,
+            @RequestBody Category category) {
+
+        Article updatedArticle = articleService.updateArticleCategory(articleId, category);
+        return ResponseEntity.ok(updatedArticle);
+    }
+
     /**
      * Deletes an article by its ID
      * @param id id of the article to delete
      */
     @RequestMapping(path = "/byId/{id}",method = RequestMethod.DELETE)
-    public void deleteArticle(@PathVariable String id) {
+    public ResponseEntity<Void>  deleteArticle(@PathVariable String id) {
 
         articleService.deleteArticle(id);
+        return ResponseEntity.noContent().build(); // HTTP 204 No Content
     }
 
 

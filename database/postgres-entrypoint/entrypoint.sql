@@ -17,5 +17,5 @@ CREATE TABLE public.user
 );
 
 INSERT INTO public.user (USERNAME, PASSWORD, BIRTHDAY, EMAIL) VALUES
-('lucy', '123', '2023-12-06', 'lucy@test.com'),
-('thomas', '123', '2024-01-01', 'thomas@test.com');
+('Lucy', '123', '2023-12-06', 'lucy@test.com'),
+('Thomas', '123', '2024-01-01', 'thomas@test.com');
