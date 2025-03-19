@@ -36,11 +36,21 @@ db.category.insertMany([
     { name: "Other", create_time: new Date() }
 ])
 
+db.createCollection('rate');
+db.rate.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
+db.rate.insertMany([
+    { name: "High", create_time: new Date() },
+    { name: "Medium", create_time: new Date() },
+    { name: "Low", create_time: new Date() }
+])
 
-//db.createCollection('article');
-//db.article.insertOne(
-//    { username: 'lucy', title: 'Hello', content: 'Hello World', create_time: new Date()}
-//)
+db.createCollection('recommendation');
+db.recommendation.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
+db.recommendation.insertMany([
+    { name: "Highly Rec.", create_time: new Date() },
+    { name: "Moderately Rec.", create_time: new Date() },
+    { name: "Partially Rec.", create_time: new Date() }
+])
 
 
 db.createCollection('article');
@@ -49,9 +59,15 @@ db.article.insertMany([
         _id: "1",
         title: "Why MongoDB?",
         content: "MongoDB is a flexible NoSQL database...",
-        authorId: 1,
+        author: 1,
         category: {
             "name": "NoSQL"
+        },
+        rate: {
+            "name": "Low"
+        },
+        recommendation: {
+            "name": "Highly Rec."
         },
         tags: [
             { "name": "Document DB" },
@@ -64,9 +80,15 @@ db.article.insertMany([
         _id: "2",
         title: "Advantage of PostgreSQL",
         content: "PostgreSQL is a powerful relational database...",
-        authorId: 2,
+        author: 2,
         category: {
             "name": "SQL"
+        },
+        rate: {
+            "name": "Medium"
+        },
+        recommendation: {
+            "name": "Moderately Rec."
         },
         tags: [
             { "name": "High concurrency" },
@@ -78,9 +100,15 @@ db.article.insertMany([
         _id: "3",
         title: "Why ElasticSearch?",
         content: "ElasticSearch is a powerful NoSQL database...",
-        authorId: 1 ,
+        author: 1 ,
         category: {
             "name": "NoSQL"
+        },
+        rate: {
+            "name": "High"
+        },
+        recommendation: {
+            "name": "Partially Rec."
         },
         tags: [
             { "name": "Document DB" }
@@ -91,9 +119,15 @@ db.article.insertMany([
         _id: "4",
         title: "Prometheus",
         content: "Prometheus is a powerful time-series database designed for monitoring and alerting. Originally developed at SoundCloud, it has since become a widely adopted open-source project under the Cloud Native Computing Foundation (CNCF).The Key Features of Prometheus contains Time-Series Data Storage, Multi-Dimensional Data Model and Powerful Query Language (PromQL)",
-        authorId: 2 ,
+        author: 2 ,
         category: {
             "name": "Other"
+        },
+        rate: {
+            "name": "Low"
+        },
+        recommendation: {
+            "name": "Highly Rec."
         },
         tags: [
             { "name": "Time-Series DB" }
@@ -106,7 +140,6 @@ db.article.insertMany([
 print('Article update ########################################################');
 
 // Step 1: Update the `category` field in articles
-// Get all unique categories used in the articles collection
 let categories = db.article.distinct("category.name");
 
 categories.forEach(function(categoryName) {
@@ -130,6 +163,35 @@ tags.forEach(function(tagName) {
         db.article.updateMany(
             { "tags.name": tagName },
             { $set: { "tags.$": tag } } // Correct way to update the matching tag in an array
+        );
+    }
+});
+
+// Step 3: Update the `rate` field in articles
+let rates = db.article.distinct("rate.name");
+
+rates.forEach(function(rateName) {
+    let rate = db.rate.findOne({ name: rateName });
+
+    if (rate) {
+        db.article.updateMany(
+            { "rate.name": rateName },
+            { $set: { "rate": rate } }
+        );
+    }
+});
+
+// Step 4: Update the `recommendation` field in articles
+let recommendations = db.article.distinct("recommendation.name");
+
+recommendations.forEach( function(recommendationName) {
+
+    let recommendation = db.recommendation.findOne({ name: recommendationName });
+
+    if (recommendation) {
+        db.article.updateMany(
+            { "recommendation.name": recommendationName },
+            { $set: { "recommendation": recommendation } }
         );
     }
 });

@@ -82,7 +82,7 @@ public class ArticleTest {
         article1.setTitle("Why MySQL?");
         article1.setContent("MySQL is a powerful database...");
         //article1.setAuthor("Alice");
-        article1.setAuthorId(1L);
+        article1.setAuthor("1");
         article1.setCategory(category);
         article1.setTags(Arrays.asList(tag1, tag2));
         articleService.insertArticle(article1);
@@ -127,7 +127,7 @@ public class ArticleTest {
         List<Article> articles = articleService.getArticleByKeyword("Alice");
         assertEquals(1, articles.size());
         //assertEquals("Alice", articles.get(0).getAuthorName());
-        Long authorId = articles.get(0).getAuthorId();
+        Long authorId = Long.valueOf(articles.get(0).getAuthor());
         assertNotNull(authorId);
         String authorName = userMapper.getUsernameById(authorId);
         assertEquals("lucy", authorName);
@@ -138,7 +138,7 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("A Guide to SQL");
         article2.setContent("SQL is essential for databases...");
-        article2.setAuthorId(2L); // example für Bob
+        article2.setAuthor("2"); // example für Bob
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag1));
         articleService.insertArticle(article2);
@@ -154,7 +154,7 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("Advanced SQL Techniques");
         article2.setContent("Deep dive into SQL...");
-        article2.setAuthorId(3L); // example for Charlie
+        article2.setAuthor("3"); // example for Charlie
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag2));
         article2 = articleService.insertArticle(article2);
@@ -170,15 +170,15 @@ public class ArticleTest {
         Article article2 = new Article();
         article2.setTitle("Database Indexing");
         article2.setContent("Indexing improves query speed...");
-        article2.setAuthorId(2L); // example for Aaron
+        article2.setAuthor("2"); // example for Aaron
         article2.setCategory(category);
         article2.setTags(Arrays.asList(tag1, tag2));
         articleService.insertArticle(article2);
 
         List<Article> sortedArticles = articleService.getAllArticlesSorted("author");
 
-        String firstAuthorName = userMapper.getUsernameById(sortedArticles.get(0).getAuthorId());
-        String secondAuthorName = userMapper.getUsernameById(sortedArticles.get(1).getAuthorId());
+        String firstAuthorName = userMapper.getUsernameById(Long.valueOf(sortedArticles.get(0).getAuthor()));
+        String secondAuthorName = userMapper.getUsernameById(Long.valueOf(sortedArticles.get(1).getAuthor()));
 
         assertEquals("Aaron", firstAuthorName);
         assertEquals("Alice", secondAuthorName);

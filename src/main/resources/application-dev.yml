@@ -39,7 +39,7 @@ spring:
       enabled: true # warm-startup the springboor project
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+2
+    time-zone: Europe/Berlin
     default-property-inclusion: non_null
 
   main:

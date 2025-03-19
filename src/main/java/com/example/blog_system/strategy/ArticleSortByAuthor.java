@@ -9,10 +9,11 @@ import java.util.List;
 @Component("articleSortByAuthor")
 public class ArticleSortByAuthor implements ArticleSortStrategy {
 
+
     @Override
     public List<Article> sort(List<Article> articles) {
         return articles.stream()
-                .sorted(Comparator.comparing(Article::getAuthorName, Comparator.nullsLast(String::compareTo)
+                .sorted(Comparator.comparing(Article::getAuthor, Comparator.nullsLast(String::compareTo)
                 ))
                 .toList();
     }
