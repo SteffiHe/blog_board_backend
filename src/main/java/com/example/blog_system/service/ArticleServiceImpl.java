@@ -106,6 +106,8 @@ public class ArticleServiceImpl implements ArticleService {
             case "createtime" -> new ArticleSortByCreateTime();
             case "author" -> new ArticleSortByAuthor();
             case "id" -> new ArticleSortById();
+            case "category" -> new ArticleSortByCategory();
+            case "tag" -> new ArticleSortByTag();
             default -> articleSortStrategy;  // Default strategy, can be "createTime" or any default
         };
 

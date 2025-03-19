@@ -7,3 +7,6 @@ import java.util.List;
 public interface ArticleSortStrategy {
     List<Article> sort(List<Article> articles);
 }
+
+
+
