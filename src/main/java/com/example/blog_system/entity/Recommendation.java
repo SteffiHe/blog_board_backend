@@ -1,6 +1,5 @@
 package com.example.blog_system.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -12,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import java.util.Date;
 
 @Data
-@Document(collection = "rate")
-public class Rate {
+@Document(collection = "recommendation")
+public class Recommendation {
     @Id
     @Field(targetType = FieldType.OBJECT_ID)
     private String id; //unique id
@@ -25,10 +24,10 @@ public class Rate {
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
 
-    public Rate() {
+    public Recommendation() {
     }
 
-    public Rate(String name) {
+    public Recommendation(String name) {
         this.name = name;
     }
 }

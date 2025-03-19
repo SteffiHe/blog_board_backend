@@ -41,6 +41,9 @@ public class Article {
     @DBRef
     private Rate rate; //article has one rate (can be null)
 
+    @DBRef
+    private Recommendation recommendation; //article has one recommendation (can be null)
+
     @CreatedDate
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;

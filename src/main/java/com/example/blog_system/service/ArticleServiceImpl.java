@@ -3,11 +3,15 @@ package com.example.blog_system.service;
 import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
-import com.example.blog_system.event.ArticleSavedEvent;
-import com.example.blog_system.repository.ArticleRepository;
-import com.example.blog_system.repository.CategoryRepository;
-import com.example.blog_system.repository.RateRepository;
-import com.example.blog_system.repository.TagRepository;
+import com.example.blog_system.entity.Category;
+import com.example.blog_system.repository.*;
+import jakarta.persistence.EntityNotFoundException;
+
+import com.example.blog_system.strategy.ArticleSortByAuthor;
+import com.example.blog_system.strategy.ArticleSortByCreateTime;
+import com.example.blog_system.strategy.ArticleSortByTitle;
+import com.example.blog_system.strategy.ArticleSortStrategy;
+
 import com.example.blog_system.strategy.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,34 +22,30 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import org.json.JSONObject; // You can use org.json or any other JSON library.
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
 
     private ArticleRepository articleRepository;
-
-
     private TagRepository tagRepository;
-
-
     private CategoryRepository categoryRepository;
-
-
     private RateRepository rateRepository;
-
+    private RecommendationRepository recommendationRepository;
     private ApplicationEventPublisher eventPublisher;
     private ArticleSortStrategy articleSortStrategy;
 
 
     @Autowired
     public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
-                               CategoryRepository categoryRepository, RateRepository rateRepository ,ApplicationEventPublisher eventPublisher,
+                               CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository ,ApplicationEventPublisher eventPublisher,
                                @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.rateRepository = rateRepository;
+        this.recommendationRepository = recommendationRepository;
         this.eventPublisher = eventPublisher;
         this.articleSortStrategy = articleSortStrategy;
         this.userMapper = userMapper;
@@ -192,6 +192,14 @@ public class ArticleServiceImpl implements ArticleService {
             );
         }
 
+        // save or update recommendation
+        if (article.getRecommendation() != null) {
+            article.setRecommendation(
+                    recommendationRepository.findByNameIgnoreCase(article.getRecommendation().getName())
+                    .orElseGet(() -> recommendationRepository.save( article.getRecommendation()))
+            );
+        }
+
         // save article
         Article savedArticle = articleRepository.save(article);
 
@@ -248,6 +256,12 @@ public class ArticleServiceImpl implements ArticleService {
         existingArticle.setRate(
                 rateRepository.findByNameIgnoreCase(article.getRate().getName())
                         .orElseGet(() -> rateRepository.save(existingArticle.getRate()))
+        );
+
+        // Aktualisiere oder speichere Recommendation
+        existingArticle.setRecommendation(
+                recommendationRepository.findByNameIgnoreCase(article.getRecommendation().getName())
+                        .orElseGet(() -> recommendationRepository.save(existingArticle.getRecommendation()))
         );
 
         Article savedArticle = articleRepository.save(existingArticle);

@@ -44,11 +44,13 @@ db.rate.insertMany([
     { name: "Low", create_time: new Date() }
 ])
 
-
-//db.createCollection('article');
-//db.article.insertOne(
-//    { username: 'lucy', title: 'Hello', content: 'Hello World', create_time: new Date()}
-//)
+db.createCollection('recommendation');
+db.recommendation.createIndex({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } })
+db.recommendation.insertMany([
+    { name: "Highly Rec.", create_time: new Date() },
+    { name: "Moderately Rec.", create_time: new Date() },
+    { name: "Partially Rec.", create_time: new Date() }
+])
 
 
 db.createCollection('article');
@@ -63,6 +65,9 @@ db.article.insertMany([
         },
         rate: {
             "name": "Low"
+        },
+        recommendation: {
+            "name": "Highly Rec."
         },
         tags: [
             { "name": "Document DB" },
@@ -82,6 +87,9 @@ db.article.insertMany([
         rate: {
             "name": "Medium"
         },
+        recommendation: {
+            "name": "Moderately Rec."
+        },
         tags: [
             { "name": "High concurrency" },
             { "name": "Relational DB" }
@@ -99,6 +107,9 @@ db.article.insertMany([
         rate: {
             "name": "High"
         },
+        recommendation: {
+            "name": "Partially Rec."
+        },
         tags: [
             { "name": "Document DB" }
         ],
@@ -114,6 +125,9 @@ db.article.insertMany([
         },
         rate: {
             "name": "Low"
+        },
+        recommendation: {
+            "name": "Highly Rec."
         },
         tags: [
             { "name": "Time-Series DB" }
@@ -163,6 +177,21 @@ rates.forEach(function(rateName) {
         db.article.updateMany(
             { "rate.name": rateName },
             { $set: { "rate": rate } }
+        );
+    }
+});
+
+// Step 4: Update the `recommendation` field in articles
+let recommendations = db.article.distinct("recommendation.name");
+
+recommendations.forEach( function(recommendationName) {
+
+    let recommendation = db.recommendation.findOne({ name: recommendationName });
+
+    if (recommendation) {
+        db.article.updateMany(
+            { "recommendation.name": recommendationName },
+            { $set: { "recommendation": recommendation } }
         );
     }
 });
