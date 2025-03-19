@@ -35,3 +35,6 @@ build/
 ### logs ###
 logs/
 .DS_Store
+
+### node_modules ###
+node_modules/
