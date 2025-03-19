@@ -4,6 +4,7 @@ import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
+import com.example.blog_system.event.ArticleSavedEvent;
 import com.example.blog_system.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -20,7 +21,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import org.json.JSONObject; // You can use org.json or any other JSON library.
 
@@ -35,11 +35,12 @@ public class ArticleServiceImpl implements ArticleService {
     private RecommendationRepository recommendationRepository;
     private ApplicationEventPublisher eventPublisher;
     private ArticleSortStrategy articleSortStrategy;
+    private UserMapper userMapper;
 
 
     @Autowired
     public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
-                               CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository ,ApplicationEventPublisher eventPublisher,
+                               CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository, UserMapper userMapper, ApplicationEventPublisher eventPublisher,
                                @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
@@ -60,26 +61,11 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.findAll();
     }
 
-    /**
-     * Retrieves all articles from the database with authorname
-     * @return a list of all articles with authorname
-     */
     @Override
-    public List<Article> getAllArticlesWithAuthorname() {
-        List<Article> articles = articleRepository.findAll();
-
-        for (Article article : articles) {
-            System.out.println("AuthorId: " + article.getAuthorId());
-            if (article.getAuthorId() != null) {
-                String username = userMapper.getUsernameById(article.getAuthorId());
-                System.out.println("Username: " + username);
-                if (username != null) {
-                    article.setAuthorName(username);
-                }
-            }
-        }
-        return articles;
+    public Article getArticleById( String id) {
+        return articleRepository.findById(id).orElse(null);
     }
+
 
     /**
      * Retrieves all articles from the database with authorname DTO
@@ -93,7 +79,7 @@ public class ArticleServiceImpl implements ArticleService {
         for (Article article : articles) {
             ArticleDTO articleDTO = new ArticleDTO();
             BeanUtils.copyProperties(article, articleDTO); // Kopiert alle gleichnamigen Felder
-            articleDTO.setAuthorName(userMapper.getUsernameById(article.getAuthorId())); // Setzt den Autorennamen
+            articleDTO.setAuthor(userMapper.getUsernameById(Long.valueOf(article.getAuthor()))); // Setzt den Autorennamen
             articleDTOList.add(articleDTO);
         }
 
@@ -136,7 +122,7 @@ public class ArticleServiceImpl implements ArticleService {
         // Search by authorId, if keyword is authorname
         Long authorId = userMapper.getUserIdByUsername(keyword); // Hole die authorId aus dem Benutzernamen
         if (authorId != null) {
-            articles.addAll(articleRepository.findByAuthorId(authorId));
+            articles.addAll(articleRepository.findByAuthor(authorId.toString()));
         }
         // Remove duplicates as there might be overlaps
         return articles.stream().distinct().toList();

@@ -3,6 +3,7 @@ package com.example.blog_system.repository;
 import com.example.blog_system.entity.Article;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,8 +27,11 @@ public interface ArticleRepository extends MongoRepository<Article, String> {
 
     /**
      * Find a list of articles by its authorId
-     * @param authorId authorId of the author
+     * @param author authorId of the author
      * @return list of articles associated with an author
      */
-    List<Article> findByAuthorId(Long authorId);
+    List<Article> findByAuthor(String author);
+
+    @Query(value = "{ '_id': { $regex: '^a[0-9]+' } }", fields = "{ '_id': 1}")
+    List<String> findAllArticleIds();
 }

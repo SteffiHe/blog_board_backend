@@ -1,10 +1,14 @@
 package com.example.blog_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.*;
+import org.springframework.data.mongodb.core.mapping.event.BeforeConvertCallback;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -27,9 +31,6 @@ public class Article {
 
     @Field(targetType = FieldType.STRING, name = "author")
     private String author; //author of the article
-
-    private Long authorId;
-    private String authorName;
 
     @DBRef
     @NotNull(message = "Category cannot be empty")

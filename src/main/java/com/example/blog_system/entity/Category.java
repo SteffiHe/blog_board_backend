@@ -30,4 +30,11 @@ public class Category {
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
 
+    public Category() {
+    }
+
+    public Category(String name) {
+        this.name = name;
+    }
+
 }
