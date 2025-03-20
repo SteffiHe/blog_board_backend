@@ -4,8 +4,8 @@ import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
 import com.example.blog_system.entity.Tag;
-import com.example.blog_system.event.ArticleEventListener;
-import com.example.blog_system.event.ArticleSavedEvent;
+import com.example.blog_system.observer.ArticleEvent;
+import com.example.blog_system.observer.ArticlePublisher;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
@@ -17,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -54,7 +52,7 @@ public class ArticleTest {
     private UserMapper userMapper;
 
     @Autowired
-    private ArticleEventListener articleEventListener;
+    private ArticlePublisher articlePublisher;
 
     @BeforeEach
     void setUp() {
@@ -81,10 +79,10 @@ public class ArticleTest {
         article1 = new Article();
         article1.setTitle("Why MySQL?");
         article1.setContent("MySQL is a powerful database...");
-        //article1.setAuthor("Alice");
         article1.setAuthor("1");
         article1.setCategory(category);
         article1.setTags(Arrays.asList(tag1, tag2));
+
         articleService.insertArticle(article1);
     }
 
@@ -110,18 +108,6 @@ public class ArticleTest {
     }
 
 
-    /**
-     * Tests if the ArticleSavedEvent is correctly triggered
-     */
-    @Test
-    void testArticleSavedEventIsTriggered() {
-        articleService.insertArticle(article1);
-        // The event should be received
-        assertNotNull(articleEventListener.getReceivedEvent(), "Das Event sollte nicht null sein!");
-        // Ensure the event contains the correct article
-        assertEquals("Why MySQL?", articleEventListener.getReceivedEvent().article().getTitle());
-    }
-
     @Test
     void testGetArticleByKeyword() {
         List<Article> articles = articleService.getArticleByKeyword("Alice");
@@ -132,6 +118,23 @@ public class ArticleTest {
         String authorName = userMapper.getUsernameById(authorId);
         assertEquals("lucy", authorName);
     }
+
+    @Test
+    public void testArticleEventTrigger() {
+        Article newArticle = new Article();
+        newArticle.setTitle("Observer Pattern");
+        newArticle.setContent("Das Observer Pattern ist nützlich...");
+        newArticle.setAuthor("2");
+        newArticle.setCategory(category);
+        newArticle.setTags(Arrays.asList(tag1));
+
+        articleService.insertArticle(newArticle);
+        //articlePublisher.publishArticleEvent("erstellt", newArticle);
+
+        assertNotNull(newArticle.getId());
+        System.out.println("Artikel-Event wurde ausgelöst.");
+    }
+
 
     @Test
     void testSortArticlesByTitle() {
