@@ -4,8 +4,8 @@ import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
 import com.example.blog_system.entity.Tag;
-import com.example.blog_system.observer.ArticleEvent;
-import com.example.blog_system.observer.ArticlePublisher;
+import com.example.blog_system.observer.ArticleObservable;
+import com.example.blog_system.observer.ArticleObserver;
 import com.example.blog_system.repository.ArticleRepository;
 import com.example.blog_system.repository.CategoryRepository;
 import com.example.blog_system.repository.TagRepository;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,8 +52,8 @@ public class ArticleTest {
     @Autowired
     private UserMapper userMapper;
 
-    @Autowired
-    private ArticlePublisher articlePublisher;
+    private ArticleObservable observable;
+    private AtomicReference<Article> receivedArticle;
 
     @BeforeEach
     void setUp() {
@@ -84,6 +85,10 @@ public class ArticleTest {
         article1.setTags(Arrays.asList(tag1, tag2));
 
         articleService.insertArticle(article1);
+
+        // Add Observer
+        observable = new ArticleObservable();
+        receivedArticle = new AtomicReference<>();
     }
 
     @AfterEach
@@ -107,7 +112,6 @@ public class ArticleTest {
         assertNotNull(username);
     }
 
-
     @Test
     void testGetArticleByKeyword() {
         List<Article> articles = articleService.getArticleByKeyword("Alice");
@@ -120,20 +124,24 @@ public class ArticleTest {
     }
 
     @Test
-    public void testArticleEventTrigger() {
+    void testObserverGetsNotified() {
+        ArticleObservable observable = new ArticleObservable();
+        ArticleObserver observer = new ArticleObserver();
+
+        // add observer
+        observable.addObserver(observer);
+        System.out.println("Observer wurde hinzugefügt!");
+
+        // Create new article
         Article newArticle = new Article();
-        newArticle.setTitle("Observer Pattern");
-        newArticle.setContent("Das Observer Pattern ist nützlich...");
-        newArticle.setAuthor("2");
-        newArticle.setCategory(category);
-        newArticle.setTags(Arrays.asList(tag1));
+        newArticle.setTitle("Spring Boot Observer");
+        newArticle.setContent("Testing Observer with real service.");
+        newArticle.setAuthor("4");
 
-        articleService.insertArticle(newArticle);
-        //articlePublisher.publishArticleEvent("erstellt", newArticle);
-
-        assertNotNull(newArticle.getId());
-        System.out.println("Artikel-Event wurde ausgelöst.");
+        // Notify observer with the new article
+        observable.setState(newArticle);
     }
+
 
 
     @Test

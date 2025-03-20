@@ -4,7 +4,7 @@ import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
-import com.example.blog_system.observer.ArticlePublisher;
+import com.example.blog_system.observer.ArticleObservable;
 import com.example.blog_system.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+
 import org.json.JSONObject; // You can use org.json or any other JSON library.
 
 @Service
@@ -28,7 +30,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     private ArticleRepository articleRepository;
-    private ArticlePublisher articlePublisher;
+    private ArticleObservable articleObservable;
     private TagRepository tagRepository;
     private CategoryRepository categoryRepository;
     private RateRepository rateRepository;
@@ -38,17 +40,21 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     @Autowired
-    public void ArticleService(ArticleRepository articleRepository, ArticlePublisher articlePublisher, TagRepository tagRepository,
+    public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
                                CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository, UserMapper userMapper,
                                @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
-        this.articlePublisher = articlePublisher;
+        this.articleObservable = new ArticleObservable();
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.rateRepository = rateRepository;
         this.recommendationRepository = recommendationRepository;
         this.articleSortStrategy = articleSortStrategy;
         this.userMapper = userMapper;
+
+        // Add Lambda-Observer
+        /*articleObservable.addObserver((source, article) ->
+                System.out.printf("Artikel-Event: '%s' wurde geändert!\n", ((Article) article).getTitle()));*/
     }
 
     /**
@@ -188,8 +194,8 @@ public class ArticleServiceImpl implements ArticleService {
         // save article
         Article savedArticle = articleRepository.save(article);
 
-        // Observer Pattern - Trigger event for article creation
-        articlePublisher.publishArticleEvent("erstellt", savedArticle);
+        // Notify Observer
+        articleObservable.setState(savedArticle);
 
         // save or update article
         return savedArticle;
@@ -206,8 +212,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.deleteById(id);
 
-        // Observer Pattern - Trigger event for article deletion
-        articlePublisher.publishArticleEvent("gelöscht", article);
+        // Notify Observer
+        articleObservable.setState(article);
 
         return article;
 
@@ -256,8 +262,8 @@ public class ArticleServiceImpl implements ArticleService {
         // Save the updated article to the repository
         Article savedArticle = articleRepository.save(existingArticle);
 
-        // Observer Pattern - Trigger event for article update
-        articlePublisher.publishArticleEvent("aktualisiert", savedArticle);
+        // Notify Observer
+        articleObservable.setState(savedArticle);
 
         return savedArticle;
     }
