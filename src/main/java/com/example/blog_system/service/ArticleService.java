@@ -26,5 +26,4 @@ public interface ArticleService {
     Article updateArticle(String id, Article article);
 
     Article updateArticleCategory(String articleId, Category category);
-
 }
