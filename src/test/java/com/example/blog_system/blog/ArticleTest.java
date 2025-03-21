@@ -138,8 +138,15 @@ public class ArticleTest {
         newArticle.setContent("Testing Observer with real service.");
         newArticle.setAuthor("4");
 
-        // Notify observer with the new article
-        observable.setState(newArticle);
+        // Create article -> Notify observer
+        observable.notifyObservers("created", newArticle);
+
+        // Update article -> Notify observer
+        newArticle.setContent("Updated Content");
+        observable.notifyObservers("updated", newArticle);
+
+        // Delete article -> Notify observer
+        observable.notifyObservers("deleted", newArticle);
     }
 
 

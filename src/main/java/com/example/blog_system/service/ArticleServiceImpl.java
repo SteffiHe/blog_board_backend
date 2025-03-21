@@ -194,8 +194,8 @@ public class ArticleServiceImpl implements ArticleService {
         // save article
         Article savedArticle = articleRepository.save(article);
 
-        // Notify Observer
-        articleObservable.setState(savedArticle);
+        // Notify Observer - article was created
+        articleObservable.notifyObservers("created", savedArticle);
 
         // save or update article
         return savedArticle;
@@ -212,8 +212,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.deleteById(id);
 
-        // Notify Observer
-        articleObservable.setState(article);
+        // Notify Observer article was deleted
+        articleObservable.notifyObservers("deleted", article);
 
         return article;
 
@@ -262,8 +262,8 @@ public class ArticleServiceImpl implements ArticleService {
         // Save the updated article to the repository
         Article savedArticle = articleRepository.save(existingArticle);
 
-        // Notify Observer
-        articleObservable.setState(savedArticle);
+        // Notify Observer - article was updated
+        articleObservable.notifyObservers("deleted", savedArticle);
 
         return savedArticle;
     }
