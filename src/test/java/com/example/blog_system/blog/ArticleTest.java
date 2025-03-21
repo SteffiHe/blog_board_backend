@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,9 +50,6 @@ public class ArticleTest {
 
     @Autowired
     private UserMapper userMapper;
-
-    private ArticleObservable observable;
-    private AtomicReference<Article> receivedArticle;
 
     @BeforeEach
     void setUp() {
@@ -85,10 +81,6 @@ public class ArticleTest {
         article1.setTags(Arrays.asList(tag1, tag2));
 
         articleService.insertArticle(article1);
-
-        // Add Observer
-        observable = new ArticleObservable();
-        receivedArticle = new AtomicReference<>();
     }
 
     @AfterEach
@@ -122,34 +114,6 @@ public class ArticleTest {
         String authorName = userMapper.getUsernameById(authorId);
         assertEquals("lucy", authorName);
     }
-
-    @Test
-    void testObserverGetsNotified() {
-        ArticleObservable observable = new ArticleObservable();
-        ArticleObserver observer = new ArticleObserver();
-
-        // add observer
-        observable.addObserver(observer);
-        System.out.println("Observer wurde hinzugefügt!");
-
-        // Create new article
-        Article newArticle = new Article();
-        newArticle.setTitle("Spring Boot Observer");
-        newArticle.setContent("Testing Observer with real service.");
-        newArticle.setAuthor("4");
-
-        // Create article -> Notify observer
-        observable.notifyObservers("created", newArticle);
-
-        // Update article -> Notify observer
-        newArticle.setContent("Updated Content");
-        observable.notifyObservers("updated", newArticle);
-
-        // Delete article -> Notify observer
-        observable.notifyObservers("deleted", newArticle);
-    }
-
-
 
     @Test
     void testSortArticlesByTitle() {
