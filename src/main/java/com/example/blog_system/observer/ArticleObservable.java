@@ -7,7 +7,6 @@ import java.beans.PropertyChangeSupport;
 
 public class ArticleObservable {
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
-    private Article state;
 
     public void addObserver(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
@@ -17,9 +16,7 @@ public class ArticleObservable {
         support.removePropertyChangeListener(listener);
     }
 
-    public void setState(Article newArticle) {
-        Article oldArticle = this.state;
-        this.state = newArticle;
-        support.firePropertyChange("article", oldArticle, newArticle);
+    public void notifyObservers(String eventType, Article article) {
+        support.firePropertyChange(eventType, null, article);
     }
 }
