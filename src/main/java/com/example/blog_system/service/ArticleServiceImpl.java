@@ -4,7 +4,7 @@ import com.example.blog_system.dao.UserMapper;
 import com.example.blog_system.dto.ArticleDTO;
 import com.example.blog_system.entity.Article;
 import com.example.blog_system.entity.Category;
-import com.example.blog_system.event.ArticleSavedEvent;
+import com.example.blog_system.observer.ArticleObservable;
 import com.example.blog_system.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -17,11 +17,12 @@ import com.example.blog_system.strategy.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+
 import org.json.JSONObject; // You can use org.json or any other JSON library.
 
 @Service
@@ -29,27 +30,31 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     private ArticleRepository articleRepository;
+    private ArticleObservable articleObservable;
     private TagRepository tagRepository;
     private CategoryRepository categoryRepository;
     private RateRepository rateRepository;
     private RecommendationRepository recommendationRepository;
-    private ApplicationEventPublisher eventPublisher;
     private ArticleSortStrategy articleSortStrategy;
     private UserMapper userMapper;
 
 
     @Autowired
     public void ArticleService(ArticleRepository articleRepository, TagRepository tagRepository,
-                               CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository, UserMapper userMapper, ApplicationEventPublisher eventPublisher,
+                               CategoryRepository categoryRepository, RateRepository rateRepository , RecommendationRepository recommendationRepository, UserMapper userMapper,
                                @Qualifier("articleSortByCreateTime") ArticleSortStrategy articleSortStrategy) {
         this.articleRepository = articleRepository;
+        this.articleObservable = new ArticleObservable();
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.rateRepository = rateRepository;
         this.recommendationRepository = recommendationRepository;
-        this.eventPublisher = eventPublisher;
         this.articleSortStrategy = articleSortStrategy;
         this.userMapper = userMapper;
+
+        // Add Lambda-Observer
+        /*articleObservable.addObserver((source, article) ->
+                System.out.printf("Artikel-Event: '%s' wurde geändert!\n", ((Article) article).getTitle()));*/
     }
 
     /**
@@ -189,8 +194,8 @@ public class ArticleServiceImpl implements ArticleService {
         // save article
         Article savedArticle = articleRepository.save(article);
 
-        // publish event
-        eventPublisher.publishEvent(new ArticleSavedEvent(savedArticle));
+        // Notify Observer - article was created
+        articleObservable.notifyObservers("created", savedArticle);
 
         // save or update article
         return savedArticle;
@@ -207,6 +212,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.deleteById(id);
 
+        // Notify Observer article was deleted
+        articleObservable.notifyObservers("deleted", article);
+
         return article;
 
     }
@@ -221,38 +229,43 @@ public class ArticleServiceImpl implements ArticleService {
         Article existingArticle = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + id));
 
+        // Update basic article properties
         existingArticle.setTitle(article.getTitle());
         existingArticle.setContent(article.getContent());
         existingArticle.setAuthor(article.getAuthor());
         existingArticle.setCreateTime(existingArticle.getCreateTime());
 
-        // Aktualisiere oder speichere Tags
+        // Update or save tags
         existingArticle.setTags(article.getTags().stream()
                 .map(tag -> tagRepository.findByNameIgnoreCase(tag.getName())
                         .stream().findFirst().orElseGet(() -> tagRepository.save(tag)))
                 .toList());
 
-        // Aktualisiere oder speichere Kategorie
+        // Update or save category
         existingArticle.setCategory(
                 categoryRepository.findByNameIgnoreCase(article.getCategory().getName())
                         .orElseGet(() -> categoryRepository.save(existingArticle.getCategory()))
         );
 
-        // Aktualisiere oder speichere Rate
+        // Update or save rating
         existingArticle.setRate(
                 rateRepository.findByNameIgnoreCase(article.getRate().getName())
                         .orElseGet(() -> rateRepository.save(existingArticle.getRate()))
         );
 
-        // Aktualisiere oder speichere Recommendation
+        // Update or save recommendation
         existingArticle.setRecommendation(
                 recommendationRepository.findByNameIgnoreCase(article.getRecommendation().getName())
                         .orElseGet(() -> recommendationRepository.save(existingArticle.getRecommendation()))
         );
 
+        // Save the updated article to the repository
         Article savedArticle = articleRepository.save(existingArticle);
-        return savedArticle;
 
+        // Notify Observer - article was updated
+        articleObservable.notifyObservers("deleted", savedArticle);
+
+        return savedArticle;
     }
 
     /**
