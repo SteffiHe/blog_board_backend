@@ -7,6 +7,7 @@ import com.example.blog_system.vo.UserVO;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Resource
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
      * @return a list of User objects representing all users
      */
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         List<User> userList = userMapper.getAllUsers();
         return userList;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
      * @return a list of UserVO objects representing all users
      */
     @Override
+    @Transactional(readOnly = true)
     public List<UserVO> getAllUsersVO() {
 
         List<UserVO> userVOList = new ArrayList<UserVO>();
@@ -55,6 +59,7 @@ public class UserServiceImpl implements UserService {
      * @return user object if found, otherwise null
      */
     @Override
+    @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         User user = userMapper.getUserByUsername(username);
         return user;
@@ -66,6 +71,7 @@ public class UserServiceImpl implements UserService {
      * @return userVO object containing the user's information
      */
     @Override
+    @Transactional(readOnly = true)
     public UserVO getUserByUsernameVO(String username) {
         User user = this.getUserByUsername(username);
         UserVO userVO = new UserVO();
@@ -79,6 +85,7 @@ public class UserServiceImpl implements UserService {
      * @return true if the user was successfully deleted, otherwise false
      */
     @Override
+    @Transactional
     public boolean deleteUserByUsername(String username) {
         int rowsAffected = userMapper.deleteUserByUsername(username);
         return rowsAffected > 0;
@@ -90,6 +97,7 @@ public class UserServiceImpl implements UserService {
      * @return true if the user was successfully inserted, otherwise false
      */
     @Override
+    @Transactional
     public boolean insertUser(UserDTO userDTO) {
         // Logic to convert UserDTO to User entity and save it to DB
         User user = new User();
@@ -105,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public boolean updateUser(UserDTO userDTO) {
         User user = userMapper.getUserByUsername(userDTO.getUsername());
 

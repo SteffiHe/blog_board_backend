@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.Observable;
 
 import org.json.JSONObject; // You can use org.json or any other JSON library.
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ArticleServiceImpl implements ArticleService {
 
 
@@ -51,10 +53,6 @@ public class ArticleServiceImpl implements ArticleService {
         this.recommendationRepository = recommendationRepository;
         this.articleSortStrategy = articleSortStrategy;
         this.userMapper = userMapper;
-
-        // Add Lambda-Observer
-        /*articleObservable.addObserver((source, article) ->
-                System.out.printf("Artikel-Event: '%s' wurde geändert!\n", ((Article) article).getTitle()));*/
     }
 
     /**
@@ -62,11 +60,13 @@ public class ArticleServiceImpl implements ArticleService {
      * @return a list of all articles
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Article> getAllArticles() {
         return articleRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Article getArticleById( String id) {
         return articleRepository.findById(id).orElse(null);
     }
@@ -77,6 +77,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @return a list of all articles with authorname DTO
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ArticleDTO> getAllArticlesWithAuthornameDTO() {
         List<Article> articles = articleRepository.findAll();
         List<ArticleDTO> articleDTOList = new ArrayList<>();
@@ -98,6 +99,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @return list of sorted articles
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Article> getAllArticlesSorted(String sortBy) {
         List<Article> articles = articleRepository.findAll();
 
@@ -121,6 +123,8 @@ public class ArticleServiceImpl implements ArticleService {
      * @param keyword keyword to search for in an article
      * @return a list of matching articles
      */
+    @Override
+    @Transactional(readOnly = true)
     public List<Article> getArticleByKeyword(String keyword) {
         // Search by title and content
         List<Article> articles = articleRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword);
@@ -140,6 +144,8 @@ public class ArticleServiceImpl implements ArticleService {
      * @param article article to save or update
      * @return saved or updated article
      */
+    @Override
+    @Transactional
     public Article insertArticle(Article article) {
         // Get the highest existing ID
         List<String> ids = articleRepository.findAllArticleIds();
@@ -155,7 +161,6 @@ public class ArticleServiceImpl implements ArticleService {
         String newId = "a" + (maxId + 1);
         article.setId(newId);
 
-
         // save or update tags
         if (article.getTags() != null) {
             article.setTags(article.getTags().stream()
@@ -168,10 +173,9 @@ public class ArticleServiceImpl implements ArticleService {
         if (article.getCategory() != null) {
             article.setCategory(
                     categoryRepository.findByNameIgnoreCase(article.getCategory().getName())
-                    .orElseGet(() -> categoryRepository.save( article.getCategory()))
+                            .orElseGet(() -> categoryRepository.save( article.getCategory()))
             );
         }
-
 
         //System.out.println(rateRepository.findByNameIgnoreCase(article.getRate().getName()));
 
@@ -206,6 +210,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param id id of an article to delete
      */
     @Override
+    @Transactional
     public Article deleteArticle(String id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + id));
@@ -225,6 +230,8 @@ public class ArticleServiceImpl implements ArticleService {
      * @param article the new article data
      * @return the updated article
      */
+    @Override
+    @Transactional
     public Article updateArticle(String id, Article article) {
         Article existingArticle = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + id));
@@ -263,7 +270,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article savedArticle = articleRepository.save(existingArticle);
 
         // Notify Observer - article was updated
-        articleObservable.notifyObservers("deleted", savedArticle);
+        articleObservable.notifyObservers("updated", savedArticle);
 
         return savedArticle;
     }
@@ -275,6 +282,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param category the new category
      * @return the updated article
      */
+    @Transactional
     public Article updateArticleCategory(String articleId, Category category) {
         // Find the article by ID
         Article article = articleRepository.findById(articleId)
