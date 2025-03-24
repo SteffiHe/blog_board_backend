@@ -72,7 +72,7 @@ public class UserTest {
     @Test
     public void testGetUsernameById() {
         Long testId = 1L;
-        System.out.println("Übergebene ID: " + testId);
+        System.out.println("Uebergebene ID: " + testId);
 
         String username = userMapper.getUsernameById(testId);
         System.out.println("Gefundener Username: " + username);

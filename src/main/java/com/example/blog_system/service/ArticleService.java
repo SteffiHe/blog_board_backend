@@ -6,6 +6,7 @@ import com.example.blog_system.entity.Category;
 import com.example.blog_system.strategy.ArticleSortStrategy;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ArticleService {
     List<Article> getAllArticles();
@@ -14,7 +15,7 @@ public interface ArticleService {
 
     List<Article> getArticleByKeyword(String keyword);
 
-    Article getArticleById(String id);
+    Optional<Article> getArticleById(String id);
 
     // Strategy pattern implementation
     List<Article> getAllArticlesSorted(String sortBy);

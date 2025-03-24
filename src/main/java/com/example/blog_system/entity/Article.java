@@ -49,7 +49,6 @@ public class Article {
     @Field(targetType = FieldType.DATE_TIME, name = "create_time")
     private Date createTime;
 
-
 }
 
 

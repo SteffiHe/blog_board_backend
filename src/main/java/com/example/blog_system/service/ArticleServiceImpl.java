@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Optional;
 
 import org.json.JSONObject; // You can use org.json or any other JSON library.
 import org.springframework.transaction.annotation.Transactional;
@@ -67,8 +68,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
-    public Article getArticleById( String id) {
-        return articleRepository.findById(id).orElse(null);
+    public Optional<Article> getArticleById( String id) {
+        return Optional.ofNullable(articleRepository.findById(id).orElse(null));
     }
 
 

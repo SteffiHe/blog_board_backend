@@ -6,10 +6,12 @@ import com.example.blog_system.entity.Category;
 import com.example.blog_system.result.Result;
 import com.example.blog_system.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/api/article")
 @RestController
@@ -31,11 +33,15 @@ public class ArticleController {
 
 
     @RequestMapping(value = "/getArticleById/{id}", method = RequestMethod.GET)
-    public Result getArticleById(@PathVariable String id) {
-        Article article = articleService.getArticleById(id);
-        System.out.println("Retrieved Article: " + article);
+    public ResponseEntity<?> getArticleById(@PathVariable String id) {
+        Optional<Article> articleOptional = articleService.getArticleById(id);
 
-        return article != null ? Result.success(article) : Result.notFound();
+        if (articleOptional.isPresent()) {
+            return ResponseEntity.ok(articleOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article with id " + id + " not found.");
+        }
+
     }
 
     /**
@@ -70,9 +76,14 @@ public class ArticleController {
      * @return a list of matching articles
      */
     @RequestMapping(value = "/getArticleByKeyword/{keyword}", method = RequestMethod.GET)
-    public ResponseEntity<List<Article>> getArticleByKeyword(@PathVariable String keyword) {
-        List<Article> articles = articleService.getArticleByKeyword(keyword);
-        return ResponseEntity.ok(articles);
+    public ResponseEntity<?> getArticleByKeyword(@PathVariable String keyword) {
+        List<Article> existingArticles = articleService.getArticleByKeyword(keyword);
+
+        if (existingArticles.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article with keyword " + keyword + " not found.");
+        } else {
+            return ResponseEntity.ok(existingArticles);
+        }
     }
 
     /**
@@ -88,12 +99,19 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/updateArticle/{articleId}", method = RequestMethod.PUT)
-    public ResponseEntity<Article> updateArticleCategory(
+    public ResponseEntity<?> updateArticleCategory(
             @PathVariable String articleId,
             @RequestBody Article article) {
 
-        Article updatedArticle = articleService.updateArticle(articleId, article);
-        return ResponseEntity.ok(updatedArticle);
+        Article existingArticle = articleService.getArticleById(articleId).orElse(null);
+
+        if(existingArticle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article with id " + articleId + " not found.");
+        } else {
+            Article updatedArticle = articleService.updateArticle(articleId, article);
+            return ResponseEntity.ok(updatedArticle);
+        }
+
     }
 
     /**
@@ -104,12 +122,19 @@ public class ArticleController {
      * @return ResponseEntity with the updated article
      */
     @RequestMapping(value = "/updateCategory/{articleId}", method = RequestMethod.PATCH)
-    public ResponseEntity<Article> updateArticle(
+    public ResponseEntity<?> updateArticle(
             @PathVariable String articleId,
             @RequestBody Category category) {
 
-        Article updatedArticle = articleService.updateArticleCategory(articleId, category);
-        return ResponseEntity.ok(updatedArticle);
+        Article existingArticle = articleService.getArticleById(articleId).orElse(null);
+
+        if(existingArticle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article with id " + articleId + " not found.");
+        } else {
+            Article updatedArticle = articleService.updateArticleCategory(articleId, category);
+            return ResponseEntity.ok(updatedArticle);
+        }
+
     }
 
     /**
@@ -118,10 +143,17 @@ public class ArticleController {
      * @param id id of the article to delete
      */
     @RequestMapping(path = "/deleteArticle/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Article> deleteArticle(@PathVariable String id) {
+    public ResponseEntity<?> deleteArticle(@PathVariable String id) {
 
-        articleService.deleteArticle(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 No Content
+        Article existingArticle = articleService.getArticleById(id).orElse(null);
+
+        if (existingArticle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article with id " + id + " not found.");
+        } else {
+            articleService.deleteArticle(id);
+            return ResponseEntity.ok("Article with id " + id + " deleted.");
+        }
+
     }
 
 
