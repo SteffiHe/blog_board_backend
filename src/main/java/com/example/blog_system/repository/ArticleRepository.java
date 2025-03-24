@@ -32,6 +32,6 @@ public interface ArticleRepository extends MongoRepository<Article, String> {
      */
     List<Article> findByAuthor(String author);
 
-    @Query(value = "{ '_id': { $regex: '^a[0-9]+' } }", fields = "{ '_id': 1}")
+    @Query(value = "{ '_id': { $regex: '^[0-9]+' } }", fields = "{ '_id': 1}")
     List<String> findAllArticleIds();
 }

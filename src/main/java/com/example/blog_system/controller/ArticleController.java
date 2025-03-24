@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/article")
+@RequestMapping("/api/article")
 @RestController
 public class ArticleController {
 
