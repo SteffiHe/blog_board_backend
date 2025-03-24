@@ -68,8 +68,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
-    public Article getArticleById( String id) {
-        return articleRepository.findById(id).orElse(null);
+    public Optional<Article> getArticleById( String id) {
+        return Optional.ofNullable(articleRepository.findById(id).orElse(null));
     }
 
 
