@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface RateRepository extends MongoRepository<Rate, String> {
 
     Optional<Rate> findByNameIgnoreCase(String name);
+    void deleteByNameIgnoreCase(String name);
 }

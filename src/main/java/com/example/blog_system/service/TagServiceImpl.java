@@ -17,6 +17,7 @@ public class TagServiceImpl implements TagService {
      * Retrieves all tags from the database
      * @return a list of all tags
      */
+    @Override
     public List<Tag> getAllTags() {
         return tagRepository.findAll();
     }
@@ -26,6 +27,7 @@ public class TagServiceImpl implements TagService {
      * @param name name of the tag
      * @return optional containing the found tag or empty if not found
      */
+    @Override
     public Optional<Tag> getTagByName(String name) {
         return tagRepository.findByNameIgnoreCase(name);
     }
@@ -35,6 +37,7 @@ public class TagServiceImpl implements TagService {
      * @param tag tag to be created
      * @return created tag
      */
+    @Override
     public Tag insertTag(Tag tag) {
         if (tagRepository.findByNameIgnoreCase(tag.getName()).isPresent()) {
             throw new IllegalArgumentException("Tag '" + tag.getName() + "' existiert bereits!");
@@ -47,6 +50,7 @@ public class TagServiceImpl implements TagService {
      * @param tag tag of an article
      * @return updated tag
      */
+    @Override
     public Tag updateTagByName(Tag tag) {
         return tagRepository.save(tag);
     }
@@ -55,6 +59,7 @@ public class TagServiceImpl implements TagService {
      * Deletes a tag from the database by its name
      * @param name name of the tag to be deleted
      */
+    @Override
     public void deleteTagByName(String name) {
         tagRepository.deleteByNameIgnoreCase(name);
     }

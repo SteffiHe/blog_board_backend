@@ -1,14 +1,8 @@
 package com.example.blog_system.designpattern;
 
-import com.example.blog_system.entity.Article;
-import com.example.blog_system.entity.Category;
-import com.example.blog_system.entity.Tag;
-import com.example.blog_system.repository.ArticleRepository;
-import com.example.blog_system.repository.CategoryRepository;
-import com.example.blog_system.repository.TagRepository;
-import com.example.blog_system.service.ArticleService;
-import com.example.blog_system.service.CategoryService;
-import com.example.blog_system.service.TagService;
+import com.example.blog_system.entity.*;
+import com.example.blog_system.repository.*;
+import com.example.blog_system.service.*;
 import com.example.blog_system.strategy.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +23,18 @@ public class StrategyTest {
 
     @Autowired
     private ArticleService articleService;
+    
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private RateService rateService;
+
+    @Autowired
+    private RecommendationService recommendationService;
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -39,16 +45,32 @@ public class StrategyTest {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private RateRepository rateRepository;
+
+    @Autowired
+    private RecommendationRepository recommendationRepository;
+
+
+
     private Category categoryBackend, categoryDesignPatterns, categoryAPI;
     private Tag tagJava, tagOOP, tagRest;
     private Article article1, article2, article3;
+    private Rate rate;
+    private Recommendation recommendation;
 
     @BeforeEach
     void setUp() {
-        // Clear database
-        articleRepository.deleteAll();
-        categoryRepository.deleteAll();
-        tagRepository.deleteAll();
+
+        // Create rate
+        rate = new Rate();
+        rate.setName("Rate test");
+        rate = rateRepository.save(rate);
+
+        // Create recommendation
+        recommendation = new Recommendation();
+        recommendation.setName("Recommendation test");
+        recommendation = recommendationRepository.save(recommendation);
 
         // save category
         categoryBackend = new Category();
@@ -82,6 +104,8 @@ public class StrategyTest {
         article1.setAuthor("Alice");
         article1.setCategory(categoryBackend);
         article1.setTags(List.of(tagJava));
+        article1.setRate(rate);
+        article1.setRecommendation(recommendation);
         article1 = articleRepository.save(article1);
 
         article2 = new Article();
@@ -89,6 +113,8 @@ public class StrategyTest {
         article2.setAuthor("Bob");
         article2.setCategory(categoryDesignPatterns);
         article2.setTags(List.of(tagOOP));
+        article2.setRate(rate);
+        article2.setRecommendation(recommendation);
         article2 = articleRepository.save(article2);
 
         article3 = new Article();
@@ -96,14 +122,25 @@ public class StrategyTest {
         article3.setAuthor("Charlie");
         article3.setCategory(categoryAPI);
         article3.setTags(List.of(tagRest));
+        article3.setRate(rate);
+        article3.setRecommendation(recommendation);
         article3 = articleRepository.save(article3);
     }
 
     @AfterEach
     void tearDown() {
-        articleRepository.deleteAll();
-        categoryRepository.deleteAll();
-        tagRepository.deleteAll();
+        articleService.deleteArticle(article1.getId());
+        articleService.deleteArticle(article2.getId());
+        articleService.deleteArticle(article3.getId());
+        categoryService.deleteCategoryByName(categoryAPI.getName());
+        categoryService.deleteCategoryByName(categoryBackend.getName());
+        categoryService.deleteCategoryByName(categoryDesignPatterns.getName());
+        tagService.deleteTagByName(tagOOP.getName());
+        tagService.deleteTagByName(tagJava.getName());
+        tagService.deleteTagByName(tagRest.getName());
+
+        rateService.deleteRateByName(rate.getName());
+        recommendationService.deleteRecommendationByName(recommendation.getName());
     }
 
     @Test

@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface RateService {
     List<Rate> getAllRates();
     Optional<Rate> getRateByName(String name);
+    void deleteRateByName(String name);
 }

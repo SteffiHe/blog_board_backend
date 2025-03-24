@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface RecommendationService {
     List<Recommendation> getAllRecommendations();
     Optional<Recommendation> getRecommendationByName(String name);
+    void deleteRecommendationByName(String name);
 }

@@ -25,4 +25,9 @@ public class RateServiceImpl implements RateService {
     public Optional<Rate> getRateByName(String name){
         return rateRepository.findByNameIgnoreCase(name);
     }
+
+    @Override
+    public void deleteRateByName(String name){
+        rateRepository.deleteByNameIgnoreCase(name);
+    }
 }

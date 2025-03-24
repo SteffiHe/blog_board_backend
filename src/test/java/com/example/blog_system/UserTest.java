@@ -60,8 +60,25 @@ public class UserTest {
     public void testGetAllUsers() {
         List<User> users = userMapper.getAllUsers();
         assertNotNull(users);
-        assertTrue(users.size() > 0);  // Check that users list is not empty
+        assertFalse(users.isEmpty());  // Check that users list is not empty
     }
+
+    @Test
+    public void getUserIdByUsername() {
+        long userId = userMapper.getUserIdByUsername("usertest");
+        assertTrue(userId > 0);
+    }
+
+    @Test
+    public void testGetUsernameById() {
+        Long testId = 1L;
+        System.out.println("Übergebene ID: " + testId);
+
+        String username = userMapper.getUsernameById(testId);
+        System.out.println("Gefundener Username: " + username);
+        assertNotNull(username);
+    }
+
 
     @Test
     public void deleteUserByUsername() {
@@ -101,4 +118,5 @@ public class UserTest {
         assertNotNull(updatedUser);
         assertEquals("updatedemail@example.com", updatedUser.getEmail());
     }
+
 }

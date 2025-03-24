@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface RecommendationRepository extends MongoRepository<Recommendation, String> {
     Optional<Recommendation> findByNameIgnoreCase(String name);
+    void deleteByNameIgnoreCase(String name);
 }
