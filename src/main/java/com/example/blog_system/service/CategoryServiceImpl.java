@@ -18,6 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Retrieves all categories from the database
      * @return a list of all categories
      */
+    @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
@@ -27,6 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param name name of a category
      * @return optional containing the found category or empty if not found
      */
+    @Override
     public Optional<Category> getCategoryByName(String name){
         return categoryRepository.findByNameIgnoreCase(name);
     }
@@ -36,6 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param category category of an article to be created
      * @return saved category
      */
+    @Override
     public Category insertCategory(Category category) {
         if (categoryRepository.findByNameIgnoreCase(category.getName()).isPresent()) {
             throw new IllegalArgumentException("Kategorie '" + category.getName() + "' existiert bereits!");
@@ -48,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param category category of an article
      * @return updated category
      */
+    @Override
     public Category updateCategoryByName(Category category) {
         return categoryRepository.save(category);
     }
@@ -56,6 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Deletes a category from the database by its name
      * @param name name of the category to be deleted
      */
+    @Override
     public void deleteCategoryByName(String name) {
         categoryRepository.deleteByNameIgnoreCase(name);
     }

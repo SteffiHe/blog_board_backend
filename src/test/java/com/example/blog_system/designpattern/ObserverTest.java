@@ -1,17 +1,11 @@
 package com.example.blog_system.designpattern;
 
 import com.example.blog_system.dao.UserMapper;
-import com.example.blog_system.entity.Article;
-import com.example.blog_system.entity.Category;
-import com.example.blog_system.entity.Tag;
+import com.example.blog_system.entity.*;
 import com.example.blog_system.observer.ArticleObservable;
 import com.example.blog_system.observer.ArticleObserver;
-import com.example.blog_system.repository.ArticleRepository;
-import com.example.blog_system.repository.CategoryRepository;
-import com.example.blog_system.repository.TagRepository;
-import com.example.blog_system.service.ArticleService;
-import com.example.blog_system.service.CategoryService;
-import com.example.blog_system.service.TagService;
+import com.example.blog_system.repository.*;
+import com.example.blog_system.service.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +24,18 @@ public class ObserverTest {
     private ArticleService articleService;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private RateService rateService;
+
+    @Autowired
+    private RecommendationService recommendationService;
+
+    @Autowired
     private ArticleRepository articleRepository;
 
     @Autowired
@@ -38,23 +44,35 @@ public class ObserverTest {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private RateRepository rateRepository;
+
+    @Autowired
+    private RecommendationRepository recommendationRepository;
+
     private Category category;
     private Tag tag1, tag2;
     private Article article1, article2;
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private TagService tagService;
+    private Rate rate;
+    private Recommendation recommendation;
+
+
 
     private ArticleObservable observable;
     private AtomicReference<Article> receivedArticle;
 
     @BeforeEach
     void setUp() {
-        // Clear data to avoid duplicates
-        tagRepository.deleteAll();
-        categoryRepository.deleteAll();
-        articleRepository.deleteAll();
+
+        // Create rate
+        rate = new Rate();
+        rate.setName("Rate test");
+        rate = rateRepository.save(rate);
+
+        // Create recommendation
+        recommendation = new Recommendation();
+        recommendation.setName("Recommendation test");
+        recommendation = recommendationRepository.save(recommendation);
 
         // Create category
         category = new Category();
@@ -77,6 +95,8 @@ public class ObserverTest {
         article1.setAuthor("1");
         article1.setCategory(category);
         article1.setTags(Arrays.asList(tag1, tag2));
+        article1.setRate(rate);
+        article1.setRecommendation(recommendation);
 
         articleService.insertArticle(article1);
 
@@ -91,6 +111,9 @@ public class ObserverTest {
         categoryService.deleteCategoryByName(category.getName());
         tagService.deleteTagByName(tag1.getName());
         tagService.deleteTagByName(tag2.getName());
+        rateService.deleteRateByName(rate.getName());
+        recommendationService.deleteRecommendationByName(recommendation.getName());
+
     }
 
     @Test

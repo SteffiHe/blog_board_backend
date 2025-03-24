@@ -23,7 +23,7 @@ public class Category {
     @Field(targetType = FieldType.OBJECT_ID)
     private String id; //unique id
 
-    @Indexed(unique = true)
+    @Indexed(unique = true)  // Indexierung für schnellere Abfragen
     private String name; //name of the category
 
     @CreatedDate

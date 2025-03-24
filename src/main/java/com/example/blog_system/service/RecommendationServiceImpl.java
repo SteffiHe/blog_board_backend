@@ -24,4 +24,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     public Optional<Recommendation> getRecommendationByName(String name){
         return recommendationRepository.findByNameIgnoreCase(name);
     }
+
+    @Override
+    public void deleteRecommendationByName(String name){
+        recommendationRepository.deleteByNameIgnoreCase(name);
+    }
 }

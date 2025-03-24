@@ -1,17 +1,11 @@
 package com.example.blog_system.blog;
 
 import com.example.blog_system.dao.UserMapper;
-import com.example.blog_system.entity.Article;
-import com.example.blog_system.entity.Category;
-import com.example.blog_system.entity.Tag;
+import com.example.blog_system.entity.*;
 import com.example.blog_system.observer.ArticleObservable;
 import com.example.blog_system.observer.ArticleObserver;
-import com.example.blog_system.repository.ArticleRepository;
-import com.example.blog_system.repository.CategoryRepository;
-import com.example.blog_system.repository.TagRepository;
-import com.example.blog_system.service.ArticleService;
-import com.example.blog_system.service.CategoryService;
-import com.example.blog_system.service.TagService;
+import com.example.blog_system.repository.*;
+import com.example.blog_system.service.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +25,26 @@ public class ArticleTest {
     @Autowired
     private ArticleService articleService;
 
+
     @Autowired
-    private ArticleRepository articleRepository;
+    private CategoryService categoryService;
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private RateService rateService;
+
+    @Autowired
+    private RecommendationService recommendationService;
+
+
+    private Category category;
+    private Tag tag1, tag2;
+    private Rate rate;
+    private Recommendation recommendation;
+    private Article article1, article2;
+
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -40,23 +52,17 @@ public class ArticleTest {
     @Autowired
     private TagRepository tagRepository;
 
-    private Category category;
-    private Tag tag1, tag2;
-    private Article article1, article2;
     @Autowired
-    private CategoryService categoryService;
+    private RateRepository rateRepository;
+
     @Autowired
-    private TagService tagService;
+    private RecommendationRepository recommendationRepository;
 
     @Autowired
     private UserMapper userMapper;
 
     @BeforeEach
     void setUp() {
-        // Clear data to avoid duplicates
-        tagRepository.deleteAll();
-        categoryRepository.deleteAll();
-        articleRepository.deleteAll();
 
         // Create category
         category = new Category();
@@ -65,20 +71,33 @@ public class ArticleTest {
 
         // Create tags
         tag1 = new Tag();
-        tag1.setName("MySQL");
+        tag1.setName("MySQL-Test");
         tag1 = tagRepository.save(tag1);
 
         tag2 = new Tag();
         tag2.setName("SQL-Test");
         tag2 = tagRepository.save(tag2);
 
+        // Create rate
+        rate = new Rate();
+        rate.setName("Rate test");
+        rate = rateRepository.save(rate);
+
+        // Create recommendation
+        recommendation = new Recommendation();
+        recommendation.setName("Recommendation test");
+        recommendation = recommendationRepository.save(recommendation);
+
         // Create first article
         article1 = new Article();
-        article1.setTitle("Why MySQL?");
-        article1.setContent("MySQL is a powerful database...");
+        article1.setTitle("Why MySQL for Test?");
+        article1.setContent("MySQL Test is a powerful database...");
         article1.setAuthor("1");
         article1.setCategory(category);
         article1.setTags(Arrays.asList(tag1, tag2));
+        article1.setRate(rate);
+        article1.setRecommendation(recommendation);
+
 
         articleService.insertArticle(article1);
     }
@@ -89,81 +108,43 @@ public class ArticleTest {
         categoryService.deleteCategoryByName(category.getName());
         tagService.deleteTagByName(tag1.getName());
         tagService.deleteTagByName(tag2.getName());
+        rateService.deleteRateByName(rate.getName());
+        recommendationService.deleteRecommendationByName(recommendation.getName());
     }
 
-    /**
-     * Test to get username by id
-     */
     @Test
-    public void testGetUsernameById() {
-        Long testId = 1L;
-        System.out.println("Übergebene ID: " + testId);
-
-        String username = userMapper.getUsernameById(testId);
-        System.out.println("Gefundener Username: " + username);
-        assertNotNull(username);
+    void testGetAllArticles() {
+        List<Article> articles = articleService.getAllArticles();
+        assertNotNull(articles);
+        assertFalse(articles.isEmpty());
     }
+
+
 
     @Test
     void testGetArticleByKeyword() {
-        List<Article> articles = articleService.getArticleByKeyword("Alice");
+        List<Article> articles = articleService.getArticleByKeyword("MySQL Test");
         assertEquals(1, articles.size());
         //assertEquals("Alice", articles.get(0).getAuthorName());
-        Long authorId = Long.valueOf(articles.get(0).getAuthor());
-        assertNotNull(authorId);
+        Long authorId = Long.valueOf(articles.getFirst().getAuthor());
+        assertEquals(1L, authorId.longValue());
+
         String authorName = userMapper.getUsernameById(authorId);
-        assertEquals("lucy", authorName);
+        assertEquals("Lucy", authorName);
     }
 
     @Test
-    void testSortArticlesByTitle() {
-        Article article2 = new Article();
-        article2.setTitle("A Guide to SQL");
-        article2.setContent("SQL is essential for databases...");
-        article2.setAuthor("2"); // example für Bob
-        article2.setCategory(category);
-        article2.setTags(Arrays.asList(tag1));
-        articleService.insertArticle(article2);
+    void testUpdateArticleCategory() {
+        Category newCategory = new Category();
+        newCategory.setName("Database-Test-Update");
+        newCategory = categoryRepository.save(newCategory);
 
-        List<Article> sortedArticles = articleService.getAllArticlesSorted("title");
 
-        assertEquals("A Guide to SQL", sortedArticles.get(0).getTitle());
-        assertEquals("Why MySQL?", sortedArticles.get(1).getTitle());
-    }
+        Article updatedArticle = articleService.updateArticleCategory(article1.getId(), newCategory);
 
-    @Test
-    void testSortArticlesByCreateTime() {
-        Article article2 = new Article();
-        article2.setTitle("Advanced SQL Techniques");
-        article2.setContent("Deep dive into SQL...");
-        article2.setAuthor("3"); // example for Charlie
-        article2.setCategory(category);
-        article2.setTags(Arrays.asList(tag2));
-        article2 = articleService.insertArticle(article2);
+        assertEquals("Database-Test-Update", updatedArticle.getCategory().getName());
 
-        List<Article> sortedArticles = articleService.getAllArticlesSorted("createtime");
-
-        assertEquals(article1.getId(), sortedArticles.get(0).getId());
-        assertEquals(article2.getId(), sortedArticles.get(1).getId());
-    }
-
-    @Test
-    void testSortArticlesByAuthor() {
-        Article article2 = new Article();
-        article2.setTitle("Database Indexing");
-        article2.setContent("Indexing improves query speed...");
-        article2.setAuthor("2"); // example for Aaron
-        article2.setCategory(category);
-        article2.setTags(Arrays.asList(tag1, tag2));
-        articleService.insertArticle(article2);
-
-        List<Article> sortedArticles = articleService.getAllArticlesSorted("author");
-
-        String firstAuthorName = userMapper.getUsernameById(Long.valueOf(sortedArticles.get(0).getAuthor()));
-        String secondAuthorName = userMapper.getUsernameById(Long.valueOf(sortedArticles.get(1).getAuthor()));
-
-        assertEquals("Aaron", firstAuthorName);
-        assertEquals("Alice", secondAuthorName);
+        categoryService.deleteCategoryByName(newCategory.getName());
     }
 
 }

@@ -36,7 +36,7 @@ public class Article {
     @NotNull(message = "Category cannot be empty")
     private Category category; //article has one category (cannot be null)
 
-    @DBRef
+    @DBRef(lazy = true)  // Lazy loading for faster queries. lazy = true: Verhindert das automatische Laden der referenzierten Objekte. Dies verbessert die Performance.
     private List<Tag> tags; //article has many tags (can be null)
 
     @DBRef
