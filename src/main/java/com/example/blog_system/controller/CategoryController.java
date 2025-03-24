@@ -33,8 +33,16 @@ public class CategoryController {
      * @return category if found
      */
     @GetMapping("/getCategoryByName/{name}")
-    public Optional<Category> getCategoryById(@PathVariable String name) {
-        return categoryService.getCategoryByName(name);
+    public ResponseEntity<?> getCategoryById(@PathVariable String name) {
+
+        Optional<Category> categoryOptional = categoryService.getCategoryByName(name);
+
+        if (categoryOptional.isPresent()) {
+            return ResponseEntity.ok(categoryOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with Name " + name + " not found.");
+
+        }
     }
 
     /**

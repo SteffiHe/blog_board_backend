@@ -32,8 +32,15 @@ public class TagController {
      * @return tag if found, otherwise response
      */
     @GetMapping("/getTagByName/{name}")
-    public Optional<Tag> getTagById(@PathVariable String name) {
-        return tagService.getTagByName(name);
+    public ResponseEntity<?> getTagById(@PathVariable String name) {
+
+        Optional<Tag> existingTagOptional = tagService.getTagByName(name);
+
+        if (existingTagOptional.isPresent()) {
+            return ResponseEntity.ok(existingTagOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tag with Name " + name + " not found.");
+        }
     }
 
     /**

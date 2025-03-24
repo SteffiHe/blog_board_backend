@@ -27,8 +27,16 @@ public class RecommendationController {
     }
 
     @RequestMapping(value = "/getRecommendationByName/{name}",method = RequestMethod.GET)
-    public Recommendation getRecommendationByName(@PathVariable String name) {
-        return recommendationService.getRecommendationByName(name).orElse(null);
+    public ResponseEntity<?> getRecommendationByName(@PathVariable String name) {
+
+        Optional<Recommendation> existingRecommendationOptional = recommendationService.getRecommendationByName(name);
+
+        if (existingRecommendationOptional.isPresent()) {
+            return ResponseEntity.ok(existingRecommendationOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recommendation with Name " + name + " not found.");
+        }
+
     }
 
     @RequestMapping(value = "/deleteRecommendationByName/{name}",method = RequestMethod.DELETE)

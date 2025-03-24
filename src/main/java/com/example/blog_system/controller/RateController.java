@@ -28,8 +28,15 @@ public class RateController {
     }
 
     @RequestMapping(value = "/getRateByName/{name}",method = RequestMethod.GET)
-    public Rate getRateByName(@PathVariable String name) {
-        return rateService.getRateByName(name).orElse(null);
+    public ResponseEntity<?>  getRateByName(@PathVariable String name) {
+
+        Optional<Rate> existingRateOptional = rateService.getRateByName(name);
+
+        if (existingRateOptional.isPresent()) {
+            return ResponseEntity.ok(existingRateOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rate with Name " + name + " not found.");
+        }
     }
 
     @RequestMapping(value = "/deleteRateByName/{name}",method = RequestMethod.DELETE)
