@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,6 +22,6 @@ public class ArticleDTO {
     private List<Tag> tags;
     private Rate rate;
     private Recommendation recommendation;
-    private String createTime;
+    private Date createTime;
 
 }

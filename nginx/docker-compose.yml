@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx-container
+    restart: always
+    network_mode: bridge
+    volumes:
+      - ./nginx-file/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
