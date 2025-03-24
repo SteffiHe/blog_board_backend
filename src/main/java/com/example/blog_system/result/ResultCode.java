@@ -8,6 +8,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum ResultCode implements IResultCode, Serializable {
+
+
     SUCCESS("200", "success"),
     BAD_REQUEST("400", "bad request"),
     UNAUTHORIZED("401", "unauthorized"),

@@ -144,15 +144,18 @@ public class ArticleServiceImpl implements ArticleService {
         // Get the highest existing ID
         List<String> ids = articleRepository.findAllArticleIds();
 
+        System.out.println("ids");
+        System.out.println(ids);
+
         int maxId = ids.stream()
                 .map(id -> new JSONObject(id).getString("_id")) // Extract the _id field from the JSON string
-                .map(id -> id.substring(1)) // Remove the "a" prefix
+                //.map(id -> id.substring(1)) // Remove the "a" prefix
                 .mapToInt(Integer::parseInt) // Convert to integer
                 .max()
                 .orElse(1); // Default to 0 if empty
 
         // Create new ID
-        String newId = "a" + (maxId + 1);
+        String newId = String.valueOf(maxId + 1);
         article.setId(newId);
 
 

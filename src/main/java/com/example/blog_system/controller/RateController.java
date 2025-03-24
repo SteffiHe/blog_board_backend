@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("/rate")
+@RequestMapping("/api/rate")
 @RestController
 public class RateController {
 
